@@ -10,8 +10,8 @@
             --bg-color: #000000;
             --card-bg: rgba(28, 28, 30, 0.6);
             --card-border: rgba(255, 255, 255, 0.1);
-            --primary-red: #ff3b30; /* 한국 상승/롱 */
-            --primary-blue: #0a84ff; /* 한국 하락/숏 */
+            --primary-red: #ff3b30;
+            --primary-blue: #0a84ff;
             --text-main: #ffffff;
             --text-sub: #8e8e93;
             --accent-green: #30d158;
@@ -30,7 +30,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 타이틀 영역 */
         header {
             display: flex;
             justify-content: space-between;
@@ -40,14 +39,12 @@
         h1 { font-size: 1.5rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
         .badge { font-size: 0.75rem; background: #333; padding: 4px 8px; border-radius: 12px; color: #aaa; }
 
-        /* 벤토 그리드 레이아웃 */
         .grid-container {
             display: grid;
             grid-template-columns: 1fr;
             gap: 16px;
         }
 
-        /* 공통 카드 스타일 (Glassmorphism) */
         .card {
             background: var(--card-bg);
             backdrop-filter: var(--glass-blur);
@@ -70,7 +67,6 @@
             gap: 6px;
         }
 
-        /* 입력 필드 스타일 */
         input[type="number"] {
             width: 100%;
             background: rgba(0,0,0,0.3);
@@ -86,7 +82,7 @@
         }
         input:focus { border-color: var(--text-sub); }
 
-        /* 1. NDF 섹션 */
+        /* NDF 섹션 */
         .gap-display {
             display: flex;
             justify-content: space-between;
@@ -95,12 +91,10 @@
         }
         .gap-value { font-size: 1.8rem; font-weight: 800; }
         .gap-status { font-size: 0.9rem; font-weight: 600; }
-        
-        /* 갭 시각화 바 */
         .gap-bar-bg { height: 6px; background: #333; border-radius: 3px; margin-top: 10px; overflow: hidden; position: relative; }
         .gap-bar-fill { height: 100%; width: 50%; background: #555; position: absolute; left: 50%; transition: all 0.5s ease; }
 
-        /* 2. 스나이퍼 섹션 (탭 버튼) */
+        /* 스나이퍼 섹션 */
         .toggle-container {
             display: flex;
             background: rgba(0,0,0,0.5);
@@ -122,7 +116,6 @@
         .toggle-btn.active-long { background: var(--primary-red); color: white; box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4); }
         .toggle-btn.active-short { background: var(--primary-blue); color: white; box-shadow: 0 4px 12px rgba(10, 132, 255, 0.4); }
 
-        /* 결과 그리드 */
         .result-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -140,7 +133,6 @@
         .res-tp { color: var(--primary-red); }
         .res-sl { color: var(--primary-blue); }
 
-        /* 켈리 베팅 섹션 */
         .kelly-info {
             margin-top: 15px;
             padding-top: 15px;
@@ -149,10 +141,10 @@
             color: var(--text-sub);
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
         .kelly-contracts { color: var(--accent-green); font-weight: bold; font-size: 1rem; }
 
-        /* 3. 체크리스트 섹션 */
         .checklist-item {
             display: flex;
             align-items: center;
@@ -177,10 +169,7 @@
         }
         .checklist-item.checked { color: var(--text-sub); text-decoration: line-through; }
 
-        /* 위젯 영역 */
         .widget-box { height: 160px; overflow: hidden; }
-
-        /* 푸터 */
         footer { margin-top: 30px; text-align: center; color: #444; font-size: 0.8rem; padding-bottom: 20px; }
     </style>
 </head>
@@ -215,8 +204,8 @@
         <div class="card">
             <div class="card-title">☁️ Pre-Market NDF Gap</div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <input type="number" id="ndfPrice" placeholder="NDF 호가 (예: 1405.5)" step="0.1" onkeyup="calcGap()">
-                <input type="number" id="prevClose" placeholder="전일 종가 (예: 1403.0)" step="0.1" onkeyup="calcGap()">
+                <input type="number" id="ndfPrice" placeholder="NDF 호가" step="0.1" oninput="calcGap()">
+                <input type="number" id="prevClose" placeholder="전일 종가" step="0.1" oninput="calcGap()">
             </div>
             
             <div class="gap-display">
@@ -238,7 +227,7 @@
 
             <div style="margin-bottom: 10px;">
                 <label style="font-size: 0.8rem; color:#888; margin-left:4px;">진입 가격</label>
-                <input type="number" id="entryPrice" placeholder="현재가 입력" inputmode="decimal" onkeyup="calcStrategy()">
+                <input type="number" id="entryPrice" placeholder="현재가 입력" inputmode="decimal" oninput="calcStrategy()">
             </div>
             
             <div class="result-grid">
@@ -257,7 +246,7 @@
             <div class="kelly-info">
                 <div style="display:flex; align-items:center; gap:8px; flex:1;">
                     <span>내 자본(백만):</span>
-                    <input type="number" id="myCapital" value="50" style="width:60px; padding:4px; font-size:0.9rem;" onkeyup="calcStrategy()">
+                    <input type="number" id="myCapital" value="50" style="width:60px; padding:4px; font-size:0.9rem;" oninput="calcStrategy()">
                 </div>
                 <div>
                     추천 계약수: <span id="contractRec" class="kelly-contracts">-</span>
@@ -315,16 +304,15 @@
     <script>
         let mode = 'long';
 
-        // 1. 체크리스트 토글 기능
+        // 1. 체크리스트 토글
         function toggleCheck(element) {
             element.classList.toggle('checked');
-            // 햅틱 피드백 (모바일 지원 시)
             if (window.navigator && window.navigator.vibrate) {
                 window.navigator.vibrate(50);
             }
         }
 
-        // 2. 모드 변경 (Long/Short)
+        // 2. 모드 변경
         function setMode(selectedMode) {
             mode = selectedMode;
             const btnLong = document.getElementById('btnLong');
@@ -335,23 +323,21 @@
             if (mode === 'long') {
                 btnLong.className = 'toggle-btn active-long';
                 btnShort.className = 'toggle-btn';
-                // 한국장: 롱은 빨강, 숏은 파랑 (일반적 개념과 반대일 수 있으나 한국 HTS 기준)
                 tpBox.style.color = 'var(--primary-red)';
                 slBox.style.color = 'var(--primary-blue)';
             } else {
                 btnLong.className = 'toggle-btn';
                 btnShort.className = 'toggle-btn active-short';
-                // 숏일 경우 익절(하락)이 파랑, 손절(상승)이 빨강
                 tpBox.style.color = 'var(--primary-blue)';
                 slBox.style.color = 'var(--primary-red)';
             }
             calcStrategy();
         }
 
-        // 3. 전략 계산기 (핵심 로직)
+        // 3. 전략 계산기
         function calcStrategy() {
             const entry = parseFloat(document.getElementById('entryPrice').value);
-            const capitalMillions = parseFloat(document.getElementById('myCapital').value); // 백만원 단위
+            const capitalMillions = parseFloat(document.getElementById('myCapital').value);
             
             const tpEl = document.getElementById('tpVal');
             const slEl = document.getElementById('slVal');
@@ -364,7 +350,6 @@
                 return;
             }
 
-            // TP/SL 계산
             let tp, sl;
             if (mode === 'long') {
                 tp = entry + 2.5;
@@ -376,13 +361,11 @@
             tpEl.innerText = tp.toFixed(1);
             slEl.innerText = sl.toFixed(1);
 
-            // Kelly Betting (자금 관리)
-            // 리스크: 자본의 4% (0.04)
-            // 1계약당 손실액: 4틱 * 1000원 = 4,000원 + 슬리피지 고려(1000원) = 약 5,000원 리스크로 가정
+            // 자금 관리 (4% Rule)
             if (!isNaN(capitalMillions)) {
                 const totalCapital = capitalMillions * 1000000;
-                const riskAmount = totalCapital * 0.04; // 4% 리스크
-                const riskPerContract = 5000; // 4틱 손실(4000) + 수수료/슬리피지(1000)
+                const riskAmount = totalCapital * 0.04; 
+                const riskPerContract = 5000; // 5000원 리스크 가정
                 
                 const maxContracts = Math.floor(riskAmount / riskPerContract);
                 contractEl.innerText = `${maxContracts} 계약`;
@@ -406,17 +389,16 @@
             const gap = ndf - prev;
             txt.innerText = (gap > 0 ? "+" : "") + gap.toFixed(1);
             
-            // 색상 및 바 처리
             if (gap > 3.0) {
                 txt.style.color = "var(--primary-red)";
-                status.innerText = "🚨 갭상승 과열 (추격 금지)";
+                status.innerText = "🚨 과열 (추격 금지)";
                 status.style.color = "var(--primary-red)";
                 bar.style.width = "90%";
                 bar.style.backgroundColor = "var(--primary-red)";
                 bar.style.left = "0";
             } else if (gap < -3.0) {
                 txt.style.color = "var(--primary-blue)";
-                status.innerText = "📉 갭하락 주의 (지지 확인)";
+                status.innerText = "📉 갭하락 주의";
                 status.style.color = "var(--primary-blue)";
                 bar.style.width = "90%";
                 bar.style.backgroundColor = "var(--primary-blue)";
@@ -430,6 +412,11 @@
                 bar.style.left = "40%";
             }
         }
+
+        // 초기화 실행
+        document.addEventListener('DOMContentLoaded', () => {
+            calcStrategy();
+        });
     </script>
 </body>
 </html>
