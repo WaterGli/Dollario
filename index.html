@@ -3,31 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sniper Deck Pro</title>
+    <title>Sniper Deck Final</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
     <style>
         :root {
             --bg-color: #000000;
-            --card-bg: rgba(28, 28, 30, 0.75);
-            --card-border: rgba(255, 255, 255, 0.15);
-            --primary-red: #ff3b30;
+            --card-bg: #1c1c1e;
+            --card-border: #333333;
+            --primary-red: #ff453a;
             --primary-blue: #0a84ff;
             --text-main: #ffffff;
             --text-sub: #8e8e93;
             --accent-green: #30d158;
-            --glass-blur: blur(20px);
         }
 
         body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            font-family: 'Pretendard', sans-serif;
             background-color: var(--bg-color);
-            background-image: radial-gradient(circle at 50% 0%, #1c1c1e 0%, #000000 70%);
             color: var(--text-main);
             margin: 0;
-            padding: 20px 16px;
-            min-height: 100vh;
+            padding: 15px;
             box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
         }
 
         header {
@@ -35,152 +31,146 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            padding: 0 5px;
         }
-        h1 { font-size: 1.5rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
-        .badge { font-size: 0.75rem; background: #333; padding: 4px 8px; border-radius: 12px; color: #aaa; }
+        h1 { font-size: 1.4rem; font-weight: 800; margin: 0; }
+        .badge { font-size: 0.7rem; background: #333; padding: 4px 8px; border-radius: 8px; color: #ccc; }
 
-        /* 그리드 시스템 */
+        /* 메인 레이아웃 */
         .main-grid {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* 1. 차트 영역 (3분할) */
+        /* 1. 상단 차트 3분할 영역 */
         .chart-row {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, 1fr); /* PC: 가로 3개 */
             gap: 10px;
-            height: 200px; /* 차트 높이 */
+            height: 220px;
         }
-        /* 모바일에서는 차트가 너무 작아지므로 세로로 쌓거나 스크롤 가능하게 처리 */
+        /* 모바일 최적화: 화면이 좁으면 세로로 변경 */
         @media (max-width: 768px) {
             .chart-row {
-                grid-template-columns: 1fr; /* 모바일: 세로로 쌓기 */
+                grid-template-columns: 1fr; /* 모바일: 세로 1개씩 */
                 height: auto;
                 gap: 15px;
             }
             .chart-container {
-                height: 180px; /* 모바일 개별 차트 높이 */
+                height: 200px; /* 모바일 개별 차트 높이 */
             }
         }
 
         .chart-container {
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
             background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
         }
 
-        /* 공통 카드 스타일 */
+        /* 2. 계산기 및 공통 카드 스타일 */
         .card {
             background: var(--card-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--card-border);
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
 
         .card-title {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-sub);
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        /* 입력 필드 스타일 */
-        input[type="number"] {
-            width: 100%;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 14px;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: bold;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        input:focus { border-color: var(--text-sub); }
-
-        .input-label { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 6px; margin-left: 4px; display:block; }
-
-        /* 계산기 섹션 스타일 */
+        /* 버튼 스타일 */
         .toggle-container {
             display: flex;
-            background: rgba(0,0,0,0.5);
-            border-radius: 14px;
+            background: #2c2c2e;
+            border-radius: 10px;
             padding: 4px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         .toggle-btn {
             flex: 1;
             border: none;
             background: transparent;
             color: var(--text-sub);
-            padding: 10px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 8px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
-        .toggle-btn.active-long { background: var(--primary-red); color: white; box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4); }
-        .toggle-btn.active-short { background: var(--primary-blue); color: white; box-shadow: 0 4px 12px rgba(10, 132, 255, 0.4); }
+        .toggle-btn.active-long { background: var(--primary-red); color: white; }
+        .toggle-btn.active-short { background: var(--primary-blue); color: white; }
 
+        /* 입력 필드 */
+        .input-group { margin-bottom: 15px; }
+        .input-label { display: block; font-size: 0.8rem; color: var(--text-sub); margin-bottom: 6px; }
+        input[type="number"] {
+            width: 100%;
+            background: #2c2c2e;
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-sizing: border-box;
+            outline: none;
+        }
+        input:focus { border-color: #555; }
+
+        /* 세팅값 (익절/손절) 가로 배치 */
         .setting-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 15px;
             margin-bottom: 15px;
-            background: rgba(0,0,0,0.2);
+            background: rgba(255,255,255,0.05);
             padding: 15px;
             border-radius: 12px;
         }
 
+        /* 결과 표시 */
         .result-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 15px;
+            gap: 15px;
+            margin-top: 10px;
         }
         .result-box {
-            background: rgba(255,255,255,0.05);
+            background: #2c2c2e;
             padding: 15px;
-            border-radius: 16px;
+            border-radius: 12px;
             text-align: center;
+            border: 1px solid transparent;
         }
-        .res-label { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 4px; }
-        .res-value { font-size: 1.4rem; font-weight: 800; }
-        .res-tp { color: var(--primary-red); }
-        .res-sl { color: var(--primary-blue); }
-
-        /* 켈리 베팅 */
+        .res-label { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 5px; }
+        .res-value { font-size: 1.5rem; font-weight: 800; }
+        
         .kelly-info {
-            margin-top: 15px;
+            margin-top: 20px;
             padding-top: 15px;
             border-top: 1px solid var(--card-border);
-            font-size: 0.85rem;
-            color: var(--text-sub);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-sub);
         }
-        .kelly-contracts { color: var(--accent-green); font-weight: bold; font-size: 1rem; }
 
-        footer { margin-top: 30px; text-align: center; color: #444; font-size: 0.8rem; padding-bottom: 20px; }
+        footer { margin-top: 40px; text-align: center; color: #444; font-size: 0.75rem; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>Sniper Deck</h1>
-        <span class="badge">PRO ver.</span>
+        <span class="badge">FINAL Ver.</span>
     </header>
 
     <div class="main-grid">
@@ -243,7 +233,7 @@
         </div>
 
         <div class="card">
-            <div class="card-title">🧮 Flexible Calculator</div>
+            <div class="card-title">🧮 Position Calculator</div>
             
             <div class="toggle-container">
                 <button class="toggle-btn active-long" id="btnLong" onclick="setMode('long')">LONG (매수)</button>
@@ -252,44 +242,43 @@
 
             <div class="setting-row">
                 <div>
-                    <span class="input-label">익절 목표 (틱/원)</span>
-                    <input type="number" id="targetGap" value="2.5" step="0.1" oninput="calcStrategy()" style="color:var(--primary-red);">
+                    <span class="input-label">익절 목표 (+틱)</span>
+                    <input type="number" id="targetGap" value="2.5" step="0.1" oninput="calcStrategy()">
                 </div>
                 <div>
-                    <span class="input-label">손절 범위 (틱/원)</span>
-                    <input type="number" id="stopGap" value="0.4" step="0.1" oninput="calcStrategy()" style="color:var(--primary-blue);">
+                    <span class="input-label">손절 범위 (-틱)</span>
+                    <input type="number" id="stopGap" value="0.4" step="0.1" oninput="calcStrategy()">
                 </div>
             </div>
 
-            <div style="margin-bottom: 10px;">
+            <div class="input-group">
                 <span class="input-label">진입 가격 (Entry Price)</span>
                 <input type="number" id="entryPrice" placeholder="현재가 입력" inputmode="decimal" oninput="calcStrategy()">
             </div>
             
             <div class="result-grid">
-                <div class="result-box" style="border: 1px solid rgba(255, 59, 48, 0.3);">
+                <div class="result-box" id="boxTP" style="border-color: var(--primary-red);">
                     <div class="res-label">익절가 (TP)</div>
-                    <div class="res-value res-tp" id="tpVal">-</div>
+                    <div class="res-value" id="tpVal" style="color: var(--primary-red);">-</div>
                 </div>
-                <div class="result-box" style="border: 1px solid rgba(10, 132, 255, 0.3);">
+                <div class="result-box" id="boxSL" style="border-color: var(--primary-blue);">
                     <div class="res-label">손절가 (SL)</div>
-                    <div class="res-value res-sl" id="slVal">-</div>
+                    <div class="res-value" id="slVal" style="color: var(--primary-blue);">-</div>
                 </div>
             </div>
 
             <div class="kelly-info">
-                <div style="display:flex; align-items:center; gap:8px; flex:1;">
+                <div style="display:flex; align-items:center; gap:8px;">
                     <span>내 자본(백만):</span>
-                    <input type="number" id="myCapital" value="50" style="width:60px; padding:4px; font-size:0.9rem;" oninput="calcStrategy()">
+                    <input type="number" id="myCapital" value="50" style="width:60px; padding:6px; background:#222;" oninput="calcStrategy()">
                 </div>
                 <div>
-                    추천 계약수: <span id="contractRec" class="kelly-contracts">-</span>
+                    추천: <span id="contractRec" style="color: var(--accent-green); font-weight:bold; font-size:1.1rem;">-</span> 계약
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-title">📅 Global Economic Calendar</div>
+        <div class="card" style="padding:0; overflow:hidden;">
             <div class="tradingview-widget-container">
                 <div class="tradingview-widget-container__widget"></div>
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
@@ -309,51 +298,49 @@
     </div>
 
     <footer>
-        System Updated: Flexible Logic & Live Data Source<br>
+        System Update: Real-time Charts & Economic Data<br>
         Cash is also a position.
     </footer>
 
     <script>
         let mode = 'long';
 
-        // 1. 모드 변경 (Long/Short)
         function setMode(selectedMode) {
             mode = selectedMode;
             const btnLong = document.getElementById('btnLong');
             const btnShort = document.getElementById('btnShort');
-            const tpBox = document.querySelector('.res-tp');
-            const slBox = document.querySelector('.res-sl');
-            const tpInput = document.getElementById('targetGap');
-            const slInput = document.getElementById('stopGap');
+            
+            // 색상 박스 참조
+            const tpBox = document.getElementById('boxTP');
+            const slBox = document.getElementById('boxSL');
+            const tpVal = document.getElementById('tpVal');
+            const slVal = document.getElementById('slVal');
 
             if (mode === 'long') {
                 btnLong.className = 'toggle-btn active-long';
                 btnShort.className = 'toggle-btn';
                 
-                // 컬러 세팅 (한국장: 롱=빨강)
-                tpBox.style.color = 'var(--primary-red)';
-                slBox.style.color = 'var(--primary-blue)';
-                tpInput.style.color = 'var(--primary-red)';
-                slInput.style.color = 'var(--primary-blue)';
+                // 롱: 익절=빨강, 손절=파랑
+                tpBox.style.borderColor = 'var(--primary-red)';
+                tpVal.style.color = 'var(--primary-red)';
+                slBox.style.borderColor = 'var(--primary-blue)';
+                slVal.style.color = 'var(--primary-blue)';
             } else {
                 btnLong.className = 'toggle-btn';
                 btnShort.className = 'toggle-btn active-short';
                 
-                // 컬러 세팅 (한국장: 숏=파랑) - 주의: 숏 수익은 파랑, 손실은 빨강으로 표기
-                tpBox.style.color = 'var(--primary-blue)'; 
-                slBox.style.color = 'var(--primary-red)';
-                tpInput.style.color = 'var(--primary-blue)';
-                slInput.style.color = 'var(--primary-red)';
+                // 숏: 익절(하락)=파랑, 손절(상승)=빨강
+                tpBox.style.borderColor = 'var(--primary-blue)';
+                tpVal.style.color = 'var(--primary-blue)';
+                slBox.style.borderColor = 'var(--primary-red)';
+                slVal.style.color = 'var(--primary-red)';
             }
             calcStrategy();
         }
 
-        // 2. 전략 계산기 (유연한 입력 반영)
         function calcStrategy() {
             const entry = parseFloat(document.getElementById('entryPrice').value);
             const capitalMillions = parseFloat(document.getElementById('myCapital').value);
-            
-            // 사용자 입력 변수 (TP/SL)
             const targetGap = parseFloat(document.getElementById('targetGap').value);
             const stopGap = parseFloat(document.getElementById('stopGap').value);
 
@@ -368,7 +355,6 @@
                 return;
             }
 
-            // TP/SL 계산
             let tp, sl;
             if (mode === 'long') {
                 tp = entry + targetGap;
@@ -380,28 +366,21 @@
             tpEl.innerText = tp.toFixed(1);
             slEl.innerText = sl.toFixed(1);
 
-            // 자금 관리 (Kelly Betting Logic)
-            // 리스크 금액 = 손절폭(틱) * 틱가치
+            // 자금 관리 로직 (4% 룰)
             if (!isNaN(capitalMillions)) {
                 const totalCapital = capitalMillions * 1000000;
-                const riskPercent = 0.04; // 4% Rule
-                const riskAmount = totalCapital * riskPercent; 
+                const riskAmount = totalCapital * 0.04; 
+                // 계약당 리스크 = (손절틱 * 틱가치) + 슬리피지/수수료
+                // USD선물 1틱(0.1원) = 1,000원
+                // 손절폭이 원 단위이므로 * 10,000 하면 됨. (예: 0.4원 * 10,000 = 4,000원)
+                const lossPerContract = (stopGap * 10000) + 2000; // +2000원은 슬리피지 보정
                 
-                // 1틱(0.1원) 당 가치 = 1,000원 가정 (USD선물)
-                // 손절폭이 0.4원 = 4틱 = 4,000원 손실 (+슬리피지 1000원) = 5,000원
-                // 사용자가 입력한 stopGap을 틱으로 환산
-                const lossPerContract = (stopGap * 10000) + 1000; // *10000은 1달러당 원화 변동분 * 계약사이즈(10,000불) 고려한 근사치. 
-                // 더 간단하게: 0.1원 변동 = 1,000원 손익.
-                // StopGap(원) * 10,000 = 계약당 손실액 (슬리피지 제외)
-                
-                const estimatedLossPerContract = (stopGap * 10000) + 2000; // 슬리피지/수수료 보수적 잡음
-                
-                const maxContracts = Math.floor(riskAmount / estimatedLossPerContract);
-                contractEl.innerText = `${maxContracts > 0 ? maxContracts : 0} 계약`;
+                const maxContracts = Math.floor(riskAmount / lossPerContract);
+                contractEl.innerText = maxContracts > 0 ? maxContracts : 0;
             }
         }
 
-        // 초기화
+        // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', () => {
             calcStrategy();
         });
