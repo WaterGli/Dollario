@@ -8,8 +8,8 @@
     <style>
         :root {
             --bg-color: #000000;
-            --card-bg: rgba(28, 28, 30, 0.6);
-            --card-border: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(28, 28, 30, 0.75);
+            --card-border: rgba(255, 255, 255, 0.15);
             --primary-red: #ff3b30;
             --primary-blue: #0a84ff;
             --text-main: #ffffff;
@@ -39,12 +39,40 @@
         h1 { font-size: 1.5rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
         .badge { font-size: 0.75rem; background: #333; padding: 4px 8px; border-radius: 12px; color: #aaa; }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
+        /* 그리드 시스템 */
+        .main-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
+        /* 1. 차트 영역 (3분할) */
+        .chart-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            height: 200px; /* 차트 높이 */
+        }
+        /* 모바일에서는 차트가 너무 작아지므로 세로로 쌓거나 스크롤 가능하게 처리 */
+        @media (max-width: 768px) {
+            .chart-row {
+                grid-template-columns: 1fr; /* 모바일: 세로로 쌓기 */
+                height: auto;
+                gap: 15px;
+            }
+            .chart-container {
+                height: 180px; /* 모바일 개별 차트 높이 */
+            }
+        }
+
+        .chart-container {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+        }
+
+        /* 공통 카드 스타일 */
         .card {
             background: var(--card-bg);
             backdrop-filter: var(--glass-blur);
@@ -53,9 +81,7 @@
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s ease;
         }
-        .card:active { transform: scale(0.98); }
 
         .card-title {
             font-size: 0.9rem;
@@ -67,6 +93,7 @@
             gap: 6px;
         }
 
+        /* 입력 필드 스타일 */
         input[type="number"] {
             width: 100%;
             background: rgba(0,0,0,0.3);
@@ -82,19 +109,9 @@
         }
         input:focus { border-color: var(--text-sub); }
 
-        /* NDF 섹션 */
-        .gap-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-top: 10px;
-        }
-        .gap-value { font-size: 1.8rem; font-weight: 800; }
-        .gap-status { font-size: 0.9rem; font-weight: 600; }
-        .gap-bar-bg { height: 6px; background: #333; border-radius: 3px; margin-top: 10px; overflow: hidden; position: relative; }
-        .gap-bar-fill { height: 100%; width: 50%; background: #555; position: absolute; left: 50%; transition: all 0.5s ease; }
+        .input-label { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 6px; margin-left: 4px; display:block; }
 
-        /* 스나이퍼 섹션 */
+        /* 계산기 섹션 스타일 */
         .toggle-container {
             display: flex;
             background: rgba(0,0,0,0.5);
@@ -116,6 +133,16 @@
         .toggle-btn.active-long { background: var(--primary-red); color: white; box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4); }
         .toggle-btn.active-short { background: var(--primary-blue); color: white; box-shadow: 0 4px 12px rgba(10, 132, 255, 0.4); }
 
+        .setting-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
         .result-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -133,6 +160,7 @@
         .res-tp { color: var(--primary-red); }
         .res-sl { color: var(--primary-blue); }
 
+        /* 켈리 베팅 */
         .kelly-info {
             margin-top: 15px;
             padding-top: 15px;
@@ -145,31 +173,6 @@
         }
         .kelly-contracts { color: var(--accent-green); font-weight: bold; font-size: 1rem; }
 
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 0.95rem;
-            cursor: pointer;
-        }
-        .checkbox-custom {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--text-sub);
-            border-radius: 6px;
-            margin-right: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .checklist-item.checked .checkbox-custom {
-            background: var(--accent-green);
-            border-color: var(--accent-green);
-        }
-        .checklist-item.checked { color: var(--text-sub); text-decoration: line-through; }
-
-        .widget-box { height: 160px; overflow: hidden; }
         footer { margin-top: 30px; text-align: center; color: #444; font-size: 0.8rem; padding-bottom: 20px; }
     </style>
 </head>
@@ -180,53 +183,86 @@
         <span class="badge">PRO ver.</span>
     </header>
 
-    <div class="tradingview-widget-container" style="margin-bottom: 20px; border-radius: 16px; overflow: hidden; border: 1px solid var(--card-border);">
-        <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-        {
-        "symbols": [
-            { "proName": "FX_IDC:USDKRW", "title": "달러/원" },
-            { "proName": "TVC:DXY", "title": "DXY" },
-            { "proName": "TVC:US10Y", "title": "US10Y" },
-            { "proName": "KRX:005930", "title": "삼성전자" }
-        ],
-        "showSymbolLogo": true,
-        "isTransparent": false,
-        "displayMode": "regular",
-        "colorTheme": "dark",
-        "locale": "kr"
-        }
-        </script>
-    </div>
-
-    <div class="grid-container">
-
-        <div class="card">
-            <div class="card-title">☁️ Pre-Market NDF Gap</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <input type="number" id="ndfPrice" placeholder="NDF 호가" step="0.1" oninput="calcGap()">
-                <input type="number" id="prevClose" placeholder="전일 종가" step="0.1" oninput="calcGap()">
+    <div class="main-grid">
+        
+        <div class="chart-row">
+            <div class="chart-container">
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                    {
+                    "symbol": "FX_IDC:USDKRW",
+                    "width": "100%",
+                    "height": "100%",
+                    "locale": "kr",
+                    "dateRange": "1D",
+                    "colorTheme": "dark",
+                    "isTransparent": true,
+                    "autosize": true,
+                    "chartOnly": false
+                    }
+                    </script>
+                </div>
             </div>
-            
-            <div class="gap-display">
-                <span id="gapText" class="gap-value">0.00</span>
-                <span id="gapStatus" class="gap-status">대기중</span>
+            <div class="chart-container">
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                    {
+                    "symbol": "TVC:DXY",
+                    "width": "100%",
+                    "height": "100%",
+                    "locale": "kr",
+                    "dateRange": "1D",
+                    "colorTheme": "dark",
+                    "isTransparent": true,
+                    "autosize": true,
+                    "chartOnly": false
+                    }
+                    </script>
+                </div>
             </div>
-            <div class="gap-bar-bg">
-                <div id="gapBar" class="gap-bar-fill"></div>
+            <div class="chart-container">
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                    {
+                    "symbol": "FX_IDC:USDJPY",
+                    "width": "100%",
+                    "height": "100%",
+                    "locale": "kr",
+                    "dateRange": "1D",
+                    "colorTheme": "dark",
+                    "isTransparent": true,
+                    "autosize": true,
+                    "chartOnly": false
+                    }
+                    </script>
+                </div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">🎯 Sniper Calculator (2.5 / 0.4)</div>
+            <div class="card-title">🧮 Flexible Calculator</div>
             
             <div class="toggle-container">
                 <button class="toggle-btn active-long" id="btnLong" onclick="setMode('long')">LONG (매수)</button>
                 <button class="toggle-btn" id="btnShort" onclick="setMode('short')">SHORT (매도)</button>
             </div>
 
+            <div class="setting-row">
+                <div>
+                    <span class="input-label">익절 목표 (틱/원)</span>
+                    <input type="number" id="targetGap" value="2.5" step="0.1" oninput="calcStrategy()" style="color:var(--primary-red);">
+                </div>
+                <div>
+                    <span class="input-label">손절 범위 (틱/원)</span>
+                    <input type="number" id="stopGap" value="0.4" step="0.1" oninput="calcStrategy()" style="color:var(--primary-blue);">
+                </div>
+            </div>
+
             <div style="margin-bottom: 10px;">
-                <label style="font-size: 0.8rem; color:#888; margin-left:4px;">진입 가격</label>
+                <span class="input-label">진입 가격 (Entry Price)</span>
                 <input type="number" id="entryPrice" placeholder="현재가 입력" inputmode="decimal" oninput="calcStrategy()">
             </div>
             
@@ -234,12 +270,10 @@
                 <div class="result-box" style="border: 1px solid rgba(255, 59, 48, 0.3);">
                     <div class="res-label">익절가 (TP)</div>
                     <div class="res-value res-tp" id="tpVal">-</div>
-                    <div style="font-size:0.7rem; color:#666;">+2.5원</div>
                 </div>
                 <div class="result-box" style="border: 1px solid rgba(10, 132, 255, 0.3);">
                     <div class="res-label">손절가 (SL)</div>
                     <div class="res-value res-sl" id="slVal">-</div>
-                    <div style="font-size:0.7rem; color:#666;">-0.4원</div>
                 </div>
             </div>
 
@@ -255,165 +289,119 @@
         </div>
 
         <div class="card">
-            <div class="card-title">⚡ Execution Protocol</div>
-            
-            <div class="checklist-item" onclick="toggleCheck(this)">
-                <div class="checkbox-custom">✓</div>
-                <span>NDF 갭 확인 및 시나리오 수립?</span>
-            </div>
-            <div class="checklist-item" onclick="toggleCheck(this)">
-                <div class="checkbox-custom">✓</div>
-                <span>외국인 선물 수급 방향 일치?</span>
-            </div>
-            <div class="checklist-item" onclick="toggleCheck(this)">
-                <div class="checkbox-custom">✓</div>
-                <span>뉴스 헤드라인 <b>반대로</b> 해석?</span>
-            </div>
-            <div class="checklist-item" onclick="toggleCheck(this)">
-                <div class="checkbox-custom">✓</div>
-                <span style="color:#ff3b30;"><b>시장가 진입 금지 (지정가 Only)</b></span>
-            </div>
-        </div>
-
-        <div class="card widget-box" style="padding:0;">
+            <div class="card-title">📅 Global Economic Calendar</div>
             <div class="tradingview-widget-container">
-              <div class="tradingview-widget-container__widget"></div>
-              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-              {
-              "symbol": "FX_IDC:USDKRW",
-              "width": "100%",
-              "height": "100%",
-              "locale": "kr",
-              "dateRange": "1D",
-              "colorTheme": "dark",
-              "isTransparent": true,
-              "autosize": true,
-              "chartOnly": true
-            }
-              </script>
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                {
+                "colorTheme": "dark",
+                "isTransparent": true,
+                "width": "100%",
+                "height": "400",
+                "locale": "kr",
+                "importanceFilter": "-1,0,1",
+                "currencyFilter": "USD,KRW,JPY"
+                }
+                </script>
             </div>
         </div>
 
     </div>
 
     <footer>
-        System Designed based on 2025 Structural Analysis<br>
-        Remember: Cash is also a position.
+        System Updated: Flexible Logic & Live Data Source<br>
+        Cash is also a position.
     </footer>
 
     <script>
         let mode = 'long';
 
-        // 1. 체크리스트 토글
-        function toggleCheck(element) {
-            element.classList.toggle('checked');
-            if (window.navigator && window.navigator.vibrate) {
-                window.navigator.vibrate(50);
-            }
-        }
-
-        // 2. 모드 변경
+        // 1. 모드 변경 (Long/Short)
         function setMode(selectedMode) {
             mode = selectedMode;
             const btnLong = document.getElementById('btnLong');
             const btnShort = document.getElementById('btnShort');
             const tpBox = document.querySelector('.res-tp');
             const slBox = document.querySelector('.res-sl');
+            const tpInput = document.getElementById('targetGap');
+            const slInput = document.getElementById('stopGap');
 
             if (mode === 'long') {
                 btnLong.className = 'toggle-btn active-long';
                 btnShort.className = 'toggle-btn';
+                
+                // 컬러 세팅 (한국장: 롱=빨강)
                 tpBox.style.color = 'var(--primary-red)';
                 slBox.style.color = 'var(--primary-blue)';
+                tpInput.style.color = 'var(--primary-red)';
+                slInput.style.color = 'var(--primary-blue)';
             } else {
                 btnLong.className = 'toggle-btn';
                 btnShort.className = 'toggle-btn active-short';
-                tpBox.style.color = 'var(--primary-blue)';
+                
+                // 컬러 세팅 (한국장: 숏=파랑) - 주의: 숏 수익은 파랑, 손실은 빨강으로 표기
+                tpBox.style.color = 'var(--primary-blue)'; 
                 slBox.style.color = 'var(--primary-red)';
+                tpInput.style.color = 'var(--primary-blue)';
+                slInput.style.color = 'var(--primary-red)';
             }
             calcStrategy();
         }
 
-        // 3. 전략 계산기
+        // 2. 전략 계산기 (유연한 입력 반영)
         function calcStrategy() {
             const entry = parseFloat(document.getElementById('entryPrice').value);
             const capitalMillions = parseFloat(document.getElementById('myCapital').value);
             
+            // 사용자 입력 변수 (TP/SL)
+            const targetGap = parseFloat(document.getElementById('targetGap').value);
+            const stopGap = parseFloat(document.getElementById('stopGap').value);
+
             const tpEl = document.getElementById('tpVal');
             const slEl = document.getElementById('slVal');
             const contractEl = document.getElementById('contractRec');
 
-            if (isNaN(entry)) {
+            if (isNaN(entry) || isNaN(targetGap) || isNaN(stopGap)) {
                 tpEl.innerText = "-";
                 slEl.innerText = "-";
                 contractEl.innerText = "-";
                 return;
             }
 
+            // TP/SL 계산
             let tp, sl;
             if (mode === 'long') {
-                tp = entry + 2.5;
-                sl = entry - 0.4;
+                tp = entry + targetGap;
+                sl = entry - stopGap;
             } else {
-                tp = entry - 2.5;
-                sl = entry + 0.4;
+                tp = entry - targetGap;
+                sl = entry + stopGap;
             }
             tpEl.innerText = tp.toFixed(1);
             slEl.innerText = sl.toFixed(1);
 
-            // 자금 관리 (4% Rule)
+            // 자금 관리 (Kelly Betting Logic)
+            // 리스크 금액 = 손절폭(틱) * 틱가치
             if (!isNaN(capitalMillions)) {
                 const totalCapital = capitalMillions * 1000000;
-                const riskAmount = totalCapital * 0.04; 
-                const riskPerContract = 5000; // 5000원 리스크 가정
+                const riskPercent = 0.04; // 4% Rule
+                const riskAmount = totalCapital * riskPercent; 
                 
-                const maxContracts = Math.floor(riskAmount / riskPerContract);
-                contractEl.innerText = `${maxContracts} 계약`;
+                // 1틱(0.1원) 당 가치 = 1,000원 가정 (USD선물)
+                // 손절폭이 0.4원 = 4틱 = 4,000원 손실 (+슬리피지 1000원) = 5,000원
+                // 사용자가 입력한 stopGap을 틱으로 환산
+                const lossPerContract = (stopGap * 10000) + 1000; // *10000은 1달러당 원화 변동분 * 계약사이즈(10,000불) 고려한 근사치. 
+                // 더 간단하게: 0.1원 변동 = 1,000원 손익.
+                // StopGap(원) * 10,000 = 계약당 손실액 (슬리피지 제외)
+                
+                const estimatedLossPerContract = (stopGap * 10000) + 2000; // 슬리피지/수수료 보수적 잡음
+                
+                const maxContracts = Math.floor(riskAmount / estimatedLossPerContract);
+                contractEl.innerText = `${maxContracts > 0 ? maxContracts : 0} 계약`;
             }
         }
 
-        // 4. NDF 갭 계산기
-        function calcGap() {
-            const ndf = parseFloat(document.getElementById('ndfPrice').value);
-            const prev = parseFloat(document.getElementById('prevClose').value);
-            
-            const txt = document.getElementById('gapText');
-            const status = document.getElementById('gapStatus');
-            const bar = document.getElementById('gapBar');
-
-            if (isNaN(ndf) || isNaN(prev)) {
-                txt.innerText = "0.00";
-                return;
-            }
-
-            const gap = ndf - prev;
-            txt.innerText = (gap > 0 ? "+" : "") + gap.toFixed(1);
-            
-            if (gap > 3.0) {
-                txt.style.color = "var(--primary-red)";
-                status.innerText = "🚨 과열 (추격 금지)";
-                status.style.color = "var(--primary-red)";
-                bar.style.width = "90%";
-                bar.style.backgroundColor = "var(--primary-red)";
-                bar.style.left = "0";
-            } else if (gap < -3.0) {
-                txt.style.color = "var(--primary-blue)";
-                status.innerText = "📉 갭하락 주의";
-                status.style.color = "var(--primary-blue)";
-                bar.style.width = "90%";
-                bar.style.backgroundColor = "var(--primary-blue)";
-                bar.style.left = "10%";
-            } else {
-                txt.style.color = "#fff";
-                status.innerText = "⚖️ 보합권 (수급 확인)";
-                status.style.color = "#aaa";
-                bar.style.width = "20%";
-                bar.style.backgroundColor = "#aaa";
-                bar.style.left = "40%";
-            }
-        }
-
-        // 초기화 실행
+        // 초기화
         document.addEventListener('DOMContentLoaded', () => {
             calcStrategy();
         });
