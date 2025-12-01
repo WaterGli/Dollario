@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sniper Deck Pro</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-bg: rgba(28, 28, 30, 0.6);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --primary-red: #ff3b30; /* 한국 상승/롱 */
+            --primary-blue: #0a84ff; /* 한국 하락/숏 */
+            --text-main: #ffffff;
+            --text-sub: #8e8e93;
+            --accent-green: #30d158;
+            --glass-blur: blur(20px);
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 0%, #1c1c1e 0%, #000000 70%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px 16px;
+            min-height: 100vh;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 타이틀 영역 */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h1 { font-size: 1.5rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+        .badge { font-size: 0.75rem; background: #333; padding: 4px 8px; border-radius: 12px; color: #aaa; }
+
+        /* 벤토 그리드 레이아웃 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        /* 공통 카드 스타일 (Glassmorphism) */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease;
+        }
+        .card:active { transform: scale(0.98); }
+
+        .card-title {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 입력 필드 스타일 */
+        input[type="number"] {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 14px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus { border-color: var(--text-sub); }
+
+        /* 1. NDF 섹션 */
+        .gap-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-top: 10px;
+        }
+        .gap-value { font-size: 1.8rem; font-weight: 800; }
+        .gap-status { font-size: 0.9rem; font-weight: 600; }
+        
+        /* 갭 시각화 바 */
+        .gap-bar-bg { height: 6px; background: #333; border-radius: 3px; margin-top: 10px; overflow: hidden; position: relative; }
+        .gap-bar-fill { height: 100%; width: 50%; background: #555; position: absolute; left: 50%; transition: all 0.5s ease; }
+
+        /* 2. 스나이퍼 섹션 (탭 버튼) */
+        .toggle-container {
+            display: flex;
+            background: rgba(0,0,0,0.5);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 15px;
+        }
+        .toggle-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: var(--text-sub);
+            padding: 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .toggle-btn.active-long { background: var(--primary-red); color: white; box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4); }
+        .toggle-btn.active-short { background: var(--primary-blue); color: white; box-shadow: 0 4px 12px rgba(10, 132, 255, 0.4); }
+
+        /* 결과 그리드 */
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .result-box {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        .res-label { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 4px; }
+        .res-value { font-size: 1.4rem; font-weight: 800; }
+        .res-tp { color: var(--primary-red); }
+        .res-sl { color: var(--primary-blue); }
+
+        /* 켈리 베팅 섹션 */
+        .kelly-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--card-border);
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            display: flex;
+            justify-content: space-between;
+        }
+        .kelly-contracts { color: var(--accent-green); font-weight: bold; font-size: 1rem; }
+
+        /* 3. 체크리스트 섹션 */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-sub);
+            border-radius: 6px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .checklist-item.checked .checkbox-custom {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+        .checklist-item.checked { color: var(--text-sub); text-decoration: line-through; }
+
+        /* 위젯 영역 */
+        .widget-box { height: 160px; overflow: hidden; }
+
+        /* 푸터 */
+        footer { margin-top: 30px; text-align: center; color: #444; font-size: 0.8rem; padding-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Sniper Deck</h1>
+        <span class="badge">PRO ver.</span>
+    </header>
+
+    <div class="tradingview-widget-container" style="margin-bottom: 20px; border-radius: 16px; overflow: hidden; border: 1px solid var(--card-border);">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+        {
+        "symbols": [
+            { "proName": "FX_IDC:USDKRW", "title": "달러/원" },
+            { "proName": "TVC:DXY", "title": "DXY" },
+            { "proName": "TVC:US10Y", "title": "US10Y" },
+            { "proName": "KRX:005930", "title": "삼성전자" }
+        ],
+        "showSymbolLogo": true,
+        "isTransparent": false,
+        "displayMode": "regular",
+        "colorTheme": "dark",
+        "locale": "kr"
+        }
+        </script>
+    </div>
+
+    <div class="grid-container">
+
+        <div class="card">
+            <div class="card-title">☁️ Pre-Market NDF Gap</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <input type="number" id="ndfPrice" placeholder="NDF 호가 (예: 1405.5)" step="0.1" onkeyup="calcGap()">
+                <input type="number" id="prevClose" placeholder="전일 종가 (예: 1403.0)" step="0.1" onkeyup="calcGap()">
+            </div>
+            
+            <div class="gap-display">
+                <span id="gapText" class="gap-value">0.00</span>
+                <span id="gapStatus" class="gap-status">대기중</span>
+            </div>
+            <div class="gap-bar-bg">
+                <div id="gapBar" class="gap-bar-fill"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🎯 Sniper Calculator (2.5 / 0.4)</div>
+            
+            <div class="toggle-container">
+                <button class="toggle-btn active-long" id="btnLong" onclick="setMode('long')">LONG (매수)</button>
+                <button class="toggle-btn" id="btnShort" onclick="setMode('short')">SHORT (매도)</button>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <label style="font-size: 0.8rem; color:#888; margin-left:4px;">진입 가격</label>
+                <input type="number" id="entryPrice" placeholder="현재가 입력" inputmode="decimal" onkeyup="calcStrategy()">
+            </div>
+            
+            <div class="result-grid">
+                <div class="result-box" style="border: 1px solid rgba(255, 59, 48, 0.3);">
+                    <div class="res-label">익절가 (TP)</div>
+                    <div class="res-value res-tp" id="tpVal">-</div>
+                    <div style="font-size:0.7rem; color:#666;">+2.5원</div>
+                </div>
+                <div class="result-box" style="border: 1px solid rgba(10, 132, 255, 0.3);">
+                    <div class="res-label">손절가 (SL)</div>
+                    <div class="res-value res-sl" id="slVal">-</div>
+                    <div style="font-size:0.7rem; color:#666;">-0.4원</div>
+                </div>
+            </div>
+
+            <div class="kelly-info">
+                <div style="display:flex; align-items:center; gap:8px; flex:1;">
+                    <span>내 자본(백만):</span>
+                    <input type="number" id="myCapital" value="50" style="width:60px; padding:4px; font-size:0.9rem;" onkeyup="calcStrategy()">
+                </div>
+                <div>
+                    추천 계약수: <span id="contractRec" class="kelly-contracts">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">⚡ Execution Protocol</div>
+            
+            <div class="checklist-item" onclick="toggleCheck(this)">
+                <div class="checkbox-custom">✓</div>
+                <span>NDF 갭 확인 및 시나리오 수립?</span>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+                <div class="checkbox-custom">✓</div>
+                <span>외국인 선물 수급 방향 일치?</span>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+                <div class="checkbox-custom">✓</div>
+                <span>뉴스 헤드라인 <b>반대로</b> 해석?</span>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+                <div class="checkbox-custom">✓</div>
+                <span style="color:#ff3b30;"><b>시장가 진입 금지 (지정가 Only)</b></span>
+            </div>
+        </div>
+
+        <div class="card widget-box" style="padding:0;">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+              {
+              "symbol": "FX_IDC:USDKRW",
+              "width": "100%",
+              "height": "100%",
+              "locale": "kr",
+              "dateRange": "1D",
+              "colorTheme": "dark",
+              "isTransparent": true,
+              "autosize": true,
+              "chartOnly": true
+            }
+              </script>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        System Designed based on 2025 Structural Analysis<br>
+        Remember: Cash is also a position.
+    </footer>
+
+    <script>
+        let mode = 'long';
+
+        // 1. 체크리스트 토글 기능
+        function toggleCheck(element) {
+            element.classList.toggle('checked');
+            // 햅틱 피드백 (모바일 지원 시)
+            if (window.navigator && window.navigator.vibrate) {
+                window.navigator.vibrate(50);
+            }
+        }
+
+        // 2. 모드 변경 (Long/Short)
+        function setMode(selectedMode) {
+            mode = selectedMode;
+            const btnLong = document.getElementById('btnLong');
+            const btnShort = document.getElementById('btnShort');
+            const tpBox = document.querySelector('.res-tp');
+            const slBox = document.querySelector('.res-sl');
+
+            if (mode === 'long') {
+                btnLong.className = 'toggle-btn active-long';
+                btnShort.className = 'toggle-btn';
+                // 한국장: 롱은 빨강, 숏은 파랑 (일반적 개념과 반대일 수 있으나 한국 HTS 기준)
+                tpBox.style.color = 'var(--primary-red)';
+                slBox.style.color = 'var(--primary-blue)';
+            } else {
+                btnLong.className = 'toggle-btn';
+                btnShort.className = 'toggle-btn active-short';
+                // 숏일 경우 익절(하락)이 파랑, 손절(상승)이 빨강
+                tpBox.style.color = 'var(--primary-blue)';
+                slBox.style.color = 'var(--primary-red)';
+            }
+            calcStrategy();
+        }
+
+        // 3. 전략 계산기 (핵심 로직)
+        function calcStrategy() {
+            const entry = parseFloat(document.getElementById('entryPrice').value);
+            const capitalMillions = parseFloat(document.getElementById('myCapital').value); // 백만원 단위
+            
+            const tpEl = document.getElementById('tpVal');
+            const slEl = document.getElementById('slVal');
+            const contractEl = document.getElementById('contractRec');
+
+            if (isNaN(entry)) {
+                tpEl.innerText = "-";
+                slEl.innerText = "-";
+                contractEl.innerText = "-";
+                return;
+            }
+
+            // TP/SL 계산
+            let tp, sl;
+            if (mode === 'long') {
+                tp = entry + 2.5;
+                sl = entry - 0.4;
+            } else {
+                tp = entry - 2.5;
+                sl = entry + 0.4;
+            }
+            tpEl.innerText = tp.toFixed(1);
+            slEl.innerText = sl.toFixed(1);
+
+            // Kelly Betting (자금 관리)
+            // 리스크: 자본의 4% (0.04)
+            // 1계약당 손실액: 4틱 * 1000원 = 4,000원 + 슬리피지 고려(1000원) = 약 5,000원 리스크로 가정
+            if (!isNaN(capitalMillions)) {
+                const totalCapital = capitalMillions * 1000000;
+                const riskAmount = totalCapital * 0.04; // 4% 리스크
+                const riskPerContract = 5000; // 4틱 손실(4000) + 수수료/슬리피지(1000)
+                
+                const maxContracts = Math.floor(riskAmount / riskPerContract);
+                contractEl.innerText = `${maxContracts} 계약`;
+            }
+        }
+
+        // 4. NDF 갭 계산기
+        function calcGap() {
+            const ndf = parseFloat(document.getElementById('ndfPrice').value);
+            const prev = parseFloat(document.getElementById('prevClose').value);
+            
+            const txt = document.getElementById('gapText');
+            const status = document.getElementById('gapStatus');
+            const bar = document.getElementById('gapBar');
+
+            if (isNaN(ndf) || isNaN(prev)) {
+                txt.innerText = "0.00";
+                return;
+            }
+
+            const gap = ndf - prev;
+            txt.innerText = (gap > 0 ? "+" : "") + gap.toFixed(1);
+            
+            // 색상 및 바 처리
+            if (gap > 3.0) {
+                txt.style.color = "var(--primary-red)";
+                status.innerText = "🚨 갭상승 과열 (추격 금지)";
+                status.style.color = "var(--primary-red)";
+                bar.style.width = "90%";
+                bar.style.backgroundColor = "var(--primary-red)";
+                bar.style.left = "0";
+            } else if (gap < -3.0) {
+                txt.style.color = "var(--primary-blue)";
+                status.innerText = "📉 갭하락 주의 (지지 확인)";
+                status.style.color = "var(--primary-blue)";
+                bar.style.width = "90%";
+                bar.style.backgroundColor = "var(--primary-blue)";
+                bar.style.left = "10%";
+            } else {
+                txt.style.color = "#fff";
+                status.innerText = "⚖️ 보합권 (수급 확인)";
+                status.style.color = "#aaa";
+                bar.style.width = "20%";
+                bar.style.backgroundColor = "#aaa";
+                bar.style.left = "40%";
+            }
+        }
+    </script>
+</body>
+</html>
