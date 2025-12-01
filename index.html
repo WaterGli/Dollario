@@ -17,6 +17,10 @@
             --accent-blue: #007aff;
             --track-bg: #e5e5ea;
             --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            
+            /* 계산기 배경색 변수 */
+            --bg-long: #fff5f5;
+            --bg-short: #f0f7ff;
         }
 
         body {
@@ -56,23 +60,15 @@
         .card {
             background: var(--card-bg); border: 1px solid var(--card-border);
             border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm);
+            transition: background-color 0.3s ease; /* 배경색 변경 애니메이션 */
         }
 
-        /* 2x2 그리드 (Home 탭 전용) */
+        /* 차트 영역 */
         .home-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
             margin-bottom: 0;
         }
         .mini-chart {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 12px; overflow: hidden; height: 160px; /* 작고 귀엽게 */
-        }
-
-        /* Currency 탭 그리드 */
-        .currency-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-        }
-        .currency-item {
             background: var(--card-bg); border: 1px solid var(--card-border);
             border-radius: 12px; overflow: hidden; height: 160px;
         }
@@ -118,13 +114,11 @@
 
         /* 결과 박스 */
         .result-box {
-            background: #f5f5f7; border-radius: 12px; padding: 15px; margin-top: 20px;
+            background: rgba(255,255,255,0.6); /* 반투명 */
+            border-radius: 12px; padding: 15px; margin-top: 10px;
+            border: 1px solid rgba(0,0,0,0.05);
         }
-        .gap-display {
-            font-size: 0.85rem; font-weight: 600; color: var(--text-sub);
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-        }
-        .gap-val { font-size: 1.1rem; font-weight: 800; }
+        
         .final-price-row { display: flex; justify-content: space-between; align-items: flex-end; }
         .final-price { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--text-main); }
         .final-qty { font-size: 0.9rem; font-weight: 700; color: var(--text-sub); }
@@ -136,12 +130,13 @@
             box-shadow: 0 4px 6px rgba(3, 199, 90, 0.2);
         }
 
-        /* 인덱스 그리드 */
-        .index-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: calc(100vh - 140px); }
-        .index-item {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 12px; overflow: hidden;
-        }
+        /* Currency Grid */
+        .currency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .currency-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; height: 160px; }
+
+        /* Index Grid */
+        .index-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .index-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; height: 160px;}
 
         footer { margin-top: 30px; text-align: center; color: var(--text-sub); font-size: 0.7rem; }
     </style>
@@ -150,7 +145,7 @@
 
     <header>
         <h1>달러로 인생역전</h1>
-        <span class="badge">v10.0</span>
+        <span class="badge">v12.0</span>
     </header>
 
     <div class="tab-container">
@@ -162,41 +157,17 @@
     <div id="tab-home" class="tab-content active">
         
         <div class="home-grid">
-            <div class="mini-chart">
-                <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    { "symbol": "CAPITALCOM:DXY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }
-                    </script>
-                </div>
+            <div class="mini-chart"> <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "CAPITALCOM:DXY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
             </div>
-            <div class="mini-chart">
-                <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    { "symbol": "TVC:KS11", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }
-                    </script>
-                </div>
+            <div class="mini-chart"> <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDKRW", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
             </div>
-            <div class="mini-chart">
-                <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    { "symbol": "FX_IDC:USDKRW", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }
-                    </script>
-                </div>
+            <div class="mini-chart"> <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDJPY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
             </div>
-            <div class="mini-chart">
-                <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    { "symbol": "FX_IDC:USDJPY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }
-                    </script>
-                </div>
+            <div class="mini-chart"> <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDEUR", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="calcCard">
             <div class="toggle-row">
                 <div class="radio-label long active" onclick="setPos('long')"><span style="font-size:1.2rem;">●</span> LONG</div>
                 <div class="radio-label short" onclick="setPos('short')"><span style="font-size:1.2rem;">●</span> SHORT</div>
@@ -218,20 +189,18 @@
                 <input type="range" id="qtySlider" min="0" max="50" value="0" oninput="syncInput(this.value)">
             </div>
 
-            <div style="margin-top:15px; background:#f9f9f9; padding:8px; border-radius:8px;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.8rem; color:#888;">현재 시장가 (Gap 확인용)</span>
-                    <input type="number" id="marketPrice" placeholder="입력" style="width:100px; font-size:1rem; padding:4px;" oninput="calcAvg()">
-                </div>
-            </div>
-
             <div class="result-box">
-                <div class="gap-display"><span>현재가와 차이 (Gap)</span><span id="gapVal" class="gap-val">0.00</span></div>
-                <div style="font-size:0.85rem; color:#888; margin-top:10px;">최종 평단가</div>
+                <div style="font-size:0.85rem; color:#888; margin-bottom:5px;">최종 예상 평단가</div>
                 <div class="final-price-row">
                     <div class="final-price" id="finalAvg">0</div>
                     <div class="final-qty" id="totalQty">0 계약</div>
                 </div>
+            </div>
+
+            <div style="margin-top:20px; display:flex; justify-content:flex-end; align-items:center;">
+                 <span style="font-size:0.8rem; color:#888; margin-right:5px;">자본금:</span>
+                 <input type="number" id="myCapital" placeholder="0" style="width:60px; font-size:0.9rem; border-bottom:1px solid #ccc; text-align:center;" oninput="calcAvg()">
+                 <span style="font-size:0.8rem; color:#888; margin-left:2px;">백만</span>
             </div>
         </div>
 
@@ -249,47 +218,18 @@
 
     <div id="tab-currency" class="tab-content">
         <div class="currency-grid">
-            <div class="currency-item"> <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "CAPITALCOM:DXY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
-            </div>
-            <div class="currency-item"> <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDKRW", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
-            </div>
-            <div class="currency-item"> <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDCNY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
-            </div>
-            <div class="currency-item"> <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDEUR", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
-            </div>
-            <div class="currency-item"> <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDJPY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
-            </div>
-            <div class="currency-item"> <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDGBP", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
-            </div>
-            <div class="currency-item"> <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDCHF", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
-            </div>
+            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDCNY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
+            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDEUR", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
+            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDGBP", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
+            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDCHF", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
         </div>
     </div>
 
     <div id="tab-index" class="tab-content">
         <div class="index-grid">
-            <div class="index-item">
-                <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    { "symbol": "TVC:KS11", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }
-                    </script>
-                </div>
-            </div>
-            <div class="index-item">
-                <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FOREXCOM:SPX500", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
-            </div>
-            <div class="index-item">
-                <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FOREXCOM:NAS100", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div>
-            </div>
-            <div class="index-item">
-                <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    { "symbol": "OANDA:JP225USD", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }
-                    </script>
-                </div>
-            </div>
+            <div class="index-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FOREXCOM:SPX500", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
+            <div class="index-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FOREXCOM:NAS100", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
+            <div class="index-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "OANDA:JP225USD", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
         </div>
     </div>
 
@@ -312,11 +252,23 @@
         }
 
         let currentPos = 'long';
+        
         function setPos(pos) {
             currentPos = pos;
-            document.querySelector('.radio-label.long').classList.toggle('active', pos === 'long');
-            document.querySelector('.radio-label.short').classList.toggle('active', pos === 'short');
-            calcAvg();
+            const card = document.getElementById('calcCard');
+            const longBtn = document.querySelector('.radio-label.long');
+            const shortBtn = document.querySelector('.radio-label.short');
+
+            if (pos === 'long') {
+                longBtn.classList.add('active');
+                shortBtn.classList.remove('active');
+                card.style.backgroundColor = "var(--bg-long)"; // 붉은 배경
+            } else {
+                longBtn.classList.remove('active');
+                shortBtn.classList.add('active');
+                card.style.backgroundColor = "var(--bg-short)"; // 푸른 배경
+            }
+            saveData();
         }
 
         function syncSlider(val) { document.getElementById('qtySlider').value = val; calcAvg(); }
@@ -327,7 +279,6 @@
             const curQ = parseFloat(document.getElementById('curQty').value) || 0;
             const addP = parseFloat(document.getElementById('addPrice').value) || 0;
             const addQ = parseFloat(document.getElementById('addQty').value) || 0;
-            const mktP = parseFloat(document.getElementById('marketPrice').value) || 0;
 
             const totalQ = curQ + addQ;
             let finalAvg = 0;
@@ -335,22 +286,47 @@
 
             document.getElementById('finalAvg').innerText = finalAvg > 0 ? finalAvg.toFixed(2) : "0";
             document.getElementById('totalQty').innerText = totalQ + " 계약";
+            
+            saveData(); // 입력할 때마다 저장
+        }
 
-            const gapEl = document.getElementById('gapVal');
-            if (mktP > 0 && finalAvg > 0) {
-                let gap = 0;
-                if (currentPos === 'long') gap = mktP - finalAvg;
-                else gap = finalAvg - mktP;
+        // --- 데이터 저장/로드 (Local Storage) ---
+        function saveData() {
+            const data = {
+                curPrice: document.getElementById('curPrice').value,
+                curQty: document.getElementById('curQty').value,
+                addPrice: document.getElementById('addPrice').value,
+                addQty: document.getElementById('addQty').value,
+                myCapital: document.getElementById('myCapital').value,
+                pos: currentPos
+            };
+            localStorage.setItem('tradingData', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('tradingData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                document.getElementById('curPrice').value = data.curPrice || "";
+                document.getElementById('curQty').value = data.curQty || "";
+                document.getElementById('addPrice').value = data.addPrice || "";
+                document.getElementById('addQty').value = data.addQty || "";
+                document.getElementById('qtySlider').value = data.addQty || 0;
+                document.getElementById('myCapital').value = data.myCapital || "50";
                 
-                const sign = gap > 0 ? "+" : "";
-                const color = gap > 0 ? "var(--accent-red)" : "var(--accent-blue)";
-                gapEl.innerText = `${sign}${gap.toFixed(2)}`;
-                gapEl.style.color = color;
+                // 포지션 복구
+                if (data.pos) setPos(data.pos);
+                else setPos('long');
+
+                calcAvg(); // 계산 실행
             } else {
-                gapEl.innerText = "0.00";
-                gapEl.style.color = "var(--text-sub)";
+                setPos('long'); // 기본값
             }
         }
+
+        document.addEventListener('DOMContentLoaded', () => { 
+            loadData(); 
+        });
     </script>
 </body>
 </html>
