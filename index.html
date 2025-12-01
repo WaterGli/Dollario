@@ -30,16 +30,9 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 12px; padding: 0 4px;
-        }
-        h1 { font-size: 1.2rem; font-weight: 800; margin: 0; color: var(--text-main); }
-        .badge { font-size: 0.65rem; background: #e0e3eb; color: var(--text-sub); padding: 4px 8px; border-radius: 6px; font-weight: 600; }
-
         /* 탭 스타일 */
         .tab-container {
-            display: flex; gap: 6px; margin-bottom: 16px;
+            display: flex; gap: 6px; margin-bottom: 12px;
             background: #e8ecef; padding: 4px; border-radius: 10px;
             overflow-x: auto; 
         }
@@ -119,6 +112,11 @@
             background: rgba(255,255,255,0.6); border-radius: 12px; padding: 15px; margin-top: 20px;
             border: 1px solid rgba(0,0,0,0.05);
         }
+        .gap-display {
+            font-size: 0.85rem; font-weight: 600; color: var(--text-sub);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+        }
+        .gap-val { font-size: 1.1rem; font-weight: 800; }
         .final-price-row { display: flex; justify-content: space-between; align-items: flex-end; }
         .final-price { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--text-main); }
         .final-qty { font-size: 0.9rem; font-weight: 700; color: var(--text-sub); }
@@ -138,15 +136,15 @@
         
         .filter-input {
             width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ddd;
-            background: #f9f9f9; font-size: 0.85rem; color: #333;
+            background: #f9f9f9; font-size: 0.85rem; color: #333; box-sizing: border-box;
         }
         .filter-input:focus { border-color: var(--primary-blue); outline: none; }
 
         .news-update-time { font-size: 0.75rem; color: var(--text-sub); }
         .news-list { list-style: none; padding: 0; margin: 0; }
-        .news-item { padding: 10px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; gap: 8px; }
+        .news-item { padding: 12px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; gap: 10px; }
         .news-link {
-            text-decoration: none; color: var(--text-main); font-size: 0.9rem; line-height: 1.4;
+            text-decoration: none; color: var(--text-main); font-size: 0.95rem; line-height: 1.4;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
         }
         
@@ -157,15 +155,15 @@
         .memo-area { width: 100%; height: 200px; border: 1px solid var(--card-border); border-radius: 12px; background: #fffcf0; padding: 15px; font-size: 0.95rem; resize: none; outline: none; box-sizing: border-box; }
         
         .calendar-box { height: 400px; overflow: hidden; border-radius: 8px; }
-        footer { margin-top: 30px; text-align: center; color: var(--text-sub); font-size: 0.7rem; }
+        
+        /* 푸터 스타일 */
+        footer { 
+            margin-top: 40px; text-align: center; color: var(--text-sub); 
+            font-size: 0.7rem; border-top: 1px solid #eee; padding-top: 15px;
+        }
     </style>
 </head>
 <body>
-
-    <header>
-        <h1>달러로 인생역전</h1>
-        <span class="badge">v19.0</span>
-    </header>
 
     <div class="tab-container">
         <button class="tab-btn active" onclick="switchTab('home')">🏠 HOME</button>
@@ -176,7 +174,6 @@
     </div>
 
     <div id="tab-home" class="tab-content active">
-        
         <div class="grid-2x2">
             <div class="mini-chart" id="chart-dxy"></div>
             <div class="mini-chart" id="chart-usdkrw"></div>
@@ -216,10 +213,10 @@
 
     <div id="tab-currency" class="tab-content">
         <div class="currency-grid">
-            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDCNY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
-            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDEUR", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
-            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDGBP", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
-            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDCHF", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
+            <div class="mini-chart" id="chart-cny"></div>
+            <div class="mini-chart" id="chart-eur"></div>
+            <div class="mini-chart" id="chart-gbp"></div>
+            <div class="mini-chart" id="chart-chf"></div>
         </div>
     </div>
 
@@ -272,7 +269,7 @@
         </div>
     </div>
 
-    <footer>Designed for Traders.</footer>
+    <footer>Designed for Traders. | v20.1</footer>
 
     <script>
         // --- 1. 차트 렌더링 함수 ---
@@ -341,10 +338,10 @@
             window.open("https://finance.naver.com/sise/sise_trans_style.naver?sosok=01", "NaverSupply", "width=500,height=600,location=no,status=no,scrollbars=yes");
         }
 
-        // --- 2. 뉴스 피드 (커스텀 필터) ---
+        // --- 2. 뉴스 피드 (정렬 및 시간 포맷 수정) ---
         async function fetchNews() {
-            const CACHE_KEY = 'newsCache19';
-            const CACHE_TIME_KEY = 'newsCacheTime19';
+            const CACHE_KEY = 'newsCache20';
+            const CACHE_TIME_KEY = 'newsCacheTime20';
             const CACHE_DURATION = 300000; // 5분
 
             const now = new Date().getTime();
@@ -352,14 +349,15 @@
             const cachedData = localStorage.getItem(CACHE_KEY);
             const timeEl = document.getElementById('newsTime');
 
-            // 사용자 키워드 로드
             const userKeywordStr = localStorage.getItem('userKeywords') || "";
             const userKeywords = userKeywordStr.split(',').map(k => k.trim()).filter(k => k.length > 0);
             const defaultKeywords = ['환율', '달러', '엔화', '유로', '금리', '외환', 'USD', 'KRW', 'JPY'];
             const allKeywords = [...defaultKeywords, ...userKeywords];
 
-            // 렌더링 함수
             const render = (items) => {
+                // 시간순 정렬 (최신순)
+                items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
                 const listEl = document.getElementById('newsList');
                 listEl.innerHTML = "";
                 let count = 0;
@@ -368,19 +366,23 @@
                 items.forEach(item => {
                     if (count >= 15) return;
                     if (uniqueTitles.has(item.title)) return;
-                    
-                    // 필터링 적용
                     const hasKeyword = allKeywords.some(key => item.title.includes(key));
                     if (!hasKeyword) return;
 
                     uniqueTitles.add(item.title);
                     const li = document.createElement('li');
                     li.className = 'news-item';
+                    
                     const date = new Date(item.pubDate);
-                    const timeStr = ('0' + date.getHours()).slice(-2) + ":" + ('0' + date.getMinutes()).slice(-2);
+                    // 24시간제 강제 변환
+                    const timeStr = date.toLocaleTimeString('ko-KR', {
+                        hour12: false, 
+                        hour: "2-digit", 
+                        minute: "2-digit"
+                    });
 
                     li.innerHTML = `
-                        <div style="min-width:40px; font-size:0.75rem; font-weight:bold; color:var(--primary-blue);">${timeStr}</div>
+                        <div style="min-width:45px; font-size:0.75rem; font-weight:bold; color:var(--primary-blue);">${timeStr}</div>
                         <div><a href="${item.link}" target="_blank" class="news-link">${item.title}</a></div>
                     `;
                     listEl.appendChild(li);
@@ -388,21 +390,18 @@
                 });
             };
 
-            // 캐시 사용 확인
             if (cachedData && lastFetch && (now - lastFetch < CACHE_DURATION)) {
                 render(JSON.parse(cachedData));
                 timeEl.innerText = `업데이트: ${new Date(parseInt(lastFetch)).toLocaleTimeString('ko-KR', {hour12: false, hour:'2-digit', minute:'2-digit'})} (캐시)`;
                 return;
             }
 
-            // 구글 뉴스 (광범위 검색 후 클라이언트 필터링)
             const RSS_URL = "https://news.google.com/rss/search?q=경제+금융+주식+환율&hl=ko&gl=KR&ceid=KR:ko";
             const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
 
             try {
                 const res = await fetch(API_URL);
                 const data = await res.json();
-                
                 if (data.items && data.items.length > 0) {
                     render(data.items);
                     localStorage.setItem(CACHE_KEY, JSON.stringify(data.items));
@@ -420,10 +419,10 @@
         function updateKeywords() {
             const input = document.getElementById('userKeywords');
             localStorage.setItem('userKeywords', input.value);
-            fetchNews(); // 즉시 새로고침
+            fetchNews();
         }
 
-        // --- 3. 계산기 로직 (심플 버전) ---
+        // --- 3. 계산기 로직 ---
         let currentPos = 'long';
         function setPos(pos) {
             currentPos = pos;
@@ -455,17 +454,12 @@
             try { localStorage.setItem('tradingData', JSON.stringify({ curPrice: document.getElementById('curPrice').value, curQty: document.getElementById('curQty').value, addPrice: document.getElementById('addPrice').value, addQty: document.getElementById('addQty').value, pos: currentPos })); } catch(e){}
         }
         function saveRoutine() {
-            const rData = { r1: document.getElementById('routine1').value, r2: document.getElementById('routine2').value, r3: document.getElementById('routine3').value };
-            localStorage.setItem('routineData', JSON.stringify(rData));
+            localStorage.setItem('routineData', JSON.stringify({ r1: document.getElementById('routine1').value, r2: document.getElementById('routine2').value, r3: document.getElementById('routine3').value }));
         }
         function saveMemo() { localStorage.setItem('userMemo', document.getElementById('memoArea').value); }
-
         function loadData() {
             try {
-                // 키워드 로드
                 document.getElementById('userKeywords').value = localStorage.getItem('userKeywords') || "";
-
-                // 계산기 로드
                 const saved = localStorage.getItem('tradingData');
                 if (saved) {
                     const d = JSON.parse(saved);
@@ -474,7 +468,6 @@
                     document.getElementById('qtySlider').value = d.addQty||0;
                     setPos(d.pos || 'long');
                 } else setPos('long');
-
                 const r = JSON.parse(localStorage.getItem('routineData'));
                 if(r) { document.getElementById('routine1').value = r.r1||""; document.getElementById('routine2').value = r.r2||""; document.getElementById('routine3').value = r.r3||""; }
                 const m = localStorage.getItem('userMemo'); if(m) document.getElementById('memoArea').value = m;
