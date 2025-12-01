@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sniper Deck Final</title>
+    <title>Sniper Deck Compact</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
     <style>
         :root {
-            --bg-color: #000000;
-            --card-bg: #1c1c1e;
-            --card-border: #333333;
+            --bg-color: #050505;
+            --card-bg: #151517;
+            --card-border: #2a2a2c;
             --primary-red: #ff453a;
             --primary-blue: #0a84ff;
             --text-main: #ffffff;
@@ -22,149 +22,108 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 15px;
+            padding: 8px; /* 전체 여백 축소 */
             box-sizing: border-box;
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 0 5px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; padding: 0 4px;
         }
-        h1 { font-size: 1.4rem; font-weight: 800; margin: 0; }
-        .badge { font-size: 0.7rem; background: #333; padding: 4px 8px; border-radius: 8px; color: #ccc; }
+        h1 { font-size: 1.1rem; font-weight: 800; margin: 0; }
+        .badge { font-size: 0.6rem; background: #333; padding: 2px 6px; border-radius: 4px; color: #ccc; }
 
-        .main-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+        .main-grid { display: flex; flex-direction: column; gap: 8px; } /* 그리드 간격 축소 */
 
-        /* 1. 상단 차트 영역 */
+        /* 1. 상단 차트 (높이 축소) */
         .chart-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            height: 220px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+            height: 160px; /* 높이 대폭 축소 */
         }
         @media (max-width: 768px) {
-            .chart-row {
-                grid-template-columns: 1fr;
-                height: auto;
-                gap: 15px;
-            }
-            .chart-container { height: 200px; }
+            .chart-row { grid-template-columns: 1fr; height: auto; gap: 8px; }
+            .chart-container { height: 150px; }
         }
 
         .chart-container {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            overflow: hidden;
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 8px; overflow: hidden;
         }
 
-        /* 2. 계산기 및 카드 공통 */
+        /* 공통 카드 스타일 (여백 축소) */
         .card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 20px;
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 10px; padding: 12px;
         }
         .card-title {
-            font-size: 0.95rem;
-            color: var(--text-sub);
-            margin-bottom: 15px;
-            font-weight: 600;
-            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.85rem; color: var(--text-sub); margin-bottom: 8px;
+            font-weight: 600; display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* 계산기 컴팩트 레이아웃 */
-        .calc-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr; /* 진입가 넓게, 설정값 좁게 */
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        @media (max-width: 768px) {
-            .calc-grid { grid-template-columns: 1fr; } /* 모바일은 세로로 */
-        }
-
+        /* 2. 계산기 (초소형) */
         .toggle-container {
-            display: flex;
-            background: #2c2c2e;
-            border-radius: 10px;
-            padding: 4px;
-            margin-bottom: 15px;
+            display: flex; background: #222; border-radius: 6px;
+            padding: 2px; margin-bottom: 8px;
         }
         .toggle-btn {
-            flex: 1;
-            border: none;
-            background: transparent;
-            color: var(--text-sub);
-            padding: 10px; /* 패딩 축소 */
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
+            flex: 1; border: none; background: transparent; color: var(--text-sub);
+            padding: 6px; border-radius: 4px; font-weight: 700; cursor: pointer;
+            font-size: 0.8rem; transition: all 0.2s;
         }
         .toggle-btn.active-long { background: var(--primary-red); color: white; }
         .toggle-btn.active-short { background: var(--primary-blue); color: white; }
 
-        .input-label { display: block; font-size: 0.75rem; color: var(--text-sub); margin-bottom: 4px; }
+        /* 입력 필드 가로 정렬 */
+        .calc-compact-row {
+            display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 6px; margin-bottom: 8px;
+        }
+        .input-wrapper { position: relative; }
+        .input-label {
+            position: absolute; top: 4px; left: 8px; font-size: 0.6rem; color: #666;
+        }
         input[type="number"] {
-            width: 100%;
-            background: #2c2c2e;
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            padding: 10px; /* 패딩 축소 */
-            color: white;
-            font-size: 1rem;
-            font-weight: bold;
-            box-sizing: border-box;
-            outline: none;
+            width: 100%; background: #222; border: 1px solid var(--card-border);
+            border-radius: 6px; padding: 18px 8px 4px 8px; /* 라벨 공간 확보 */
+            color: white; font-size: 1rem; font-weight: bold; box-sizing: border-box; outline: none;
+            text-align: right;
         }
         input:focus { border-color: #555; }
 
-        .result-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
+        /* 결과창 */
+        .result-compact {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
         }
-        .result-box {
-            background: #2c2c2e;
-            padding: 12px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid transparent;
+        .res-box {
+            background: #222; padding: 6px 10px; border-radius: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 3px solid transparent;
         }
-        .res-label { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 2px; }
-        .res-value { font-size: 1.3rem; font-weight: 800; }
-        
-        /* 자금 관리 한줄 배치 */
-        .kelly-compact {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid var(--card-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            color: var(--text-sub);
-        }
-        .kelly-input-group { display: flex; align-items: center; gap: 8px; }
+        .res-title { font-size: 0.75rem; color: #888; }
+        .res-val { font-size: 1.1rem; font-weight: 800; }
 
-        footer { margin-top: 40px; text-align: center; color: #444; font-size: 0.75rem; }
+        /* 자금관리 미니 */
+        .kelly-mini {
+            margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--card-border);
+            display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;
+        }
+
+        /* 3. 네이버 수급 버튼 */
+        .naver-btn {
+            width: 100%; padding: 10px; border-radius: 6px; border: none;
+            background: #2db400; color: white; font-weight: bold; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 6px;
+            font-size: 0.9rem; margin-top: 5px;
+        }
+        .naver-btn:active { opacity: 0.8; }
+
+        footer { margin-top: 20px; text-align: center; color: #333; font-size: 0.6rem; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>Sniper Deck</h1>
-        <span class="badge">v3.0</span>
+        <span class="badge">Compact</span>
     </header>
 
     <div class="main-grid">
@@ -174,10 +133,7 @@
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    {
-                    "symbol": "FX_IDC:USDKRW",
-                    "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true, "chartOnly": false
-                    }
+                    { "symbol": "FX_IDC:USDKRW", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true, "chartOnly": false }
                     </script>
                 </div>
             </div>
@@ -185,10 +141,7 @@
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    {
-                    "symbol": "ICEUS:DX1!",
-                    "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true, "chartOnly": false
-                    }
+                    { "symbol": "CAPITALCOM:DXY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true, "chartOnly": false }
                     </script>
                 </div>
             </div>
@@ -196,99 +149,88 @@
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-                    {
-                    "symbol": "FX_IDC:USDJPY",
-                    "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true, "chartOnly": false
-                    }
+                    { "symbol": "FX_IDC:USDJPY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true, "chartOnly": false }
                     </script>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">
-                🧮 Position Calculator
-            </div>
+            <div class="card-title">🧮 Calculator</div>
             
             <div class="toggle-container">
-                <button class="toggle-btn active-long" id="btnLong" onclick="setMode('long')">LONG (매수)</button>
-                <button class="toggle-btn" id="btnShort" onclick="setMode('short')">SHORT (매도)</button>
+                <button class="toggle-btn active-long" id="btnLong" onclick="setMode('long')">LONG</button>
+                <button class="toggle-btn" id="btnShort" onclick="setMode('short')">SHORT</button>
             </div>
 
-            <div class="calc-grid">
-                <div>
-                    <span class="input-label">진입 가격 (Entry)</span>
+            <div class="calc-compact-row">
+                <div class="input-wrapper">
+                    <span class="input-label">진입가</span>
                     <input type="number" id="entryPrice" placeholder="현재가" inputmode="decimal" oninput="calcStrategy()">
                 </div>
-                <div>
-                    <span class="input-label">익절 (+틱)</span>
+                <div class="input-wrapper">
+                    <span class="input-label">익절(틱)</span>
                     <input type="number" id="targetGap" value="2.5" step="0.1" oninput="calcStrategy()">
                 </div>
-                <div>
-                    <span class="input-label">손절 (-틱)</span>
+                <div class="input-wrapper">
+                    <span class="input-label">손절(틱)</span>
                     <input type="number" id="stopGap" value="0.4" step="0.1" oninput="calcStrategy()">
                 </div>
             </div>
             
-            <div class="result-grid">
-                <div class="result-box" id="boxTP" style="border-color: var(--primary-red);">
-                    <div class="res-label">익절가 (TP)</div>
-                    <div class="res-value" id="tpVal" style="color: var(--primary-red);">-</div>
+            <div class="result-compact">
+                <div class="res-box" id="boxTP" style="border-left-color: var(--primary-red);">
+                    <span class="res-title">익절(TP)</span>
+                    <span class="res-val" id="tpVal" style="color: var(--primary-red);">-</span>
                 </div>
-                <div class="result-box" id="boxSL" style="border-color: var(--primary-blue);">
-                    <div class="res-label">손절가 (SL)</div>
-                    <div class="res-value" id="slVal" style="color: var(--primary-blue);">-</div>
+                <div class="res-box" id="boxSL" style="border-left-color: var(--primary-blue);">
+                    <span class="res-title">손절(SL)</span>
+                    <span class="res-val" id="slVal" style="color: var(--primary-blue);">-</span>
                 </div>
             </div>
 
-            <div class="kelly-compact">
-                <div class="kelly-input-group">
-                    <span>자본(백만):</span>
-                    <input type="number" id="myCapital" value="50" style="width:50px; padding:6px; background:#222; text-align:center;" oninput="calcStrategy()">
+            <div class="kelly-mini">
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <span style="color:#888;">자본(백만):</span>
+                    <input type="number" id="myCapital" value="50" style="width:40px; padding:2px; background:transparent; border:none; border-bottom:1px solid #444; color:white; text-align:center;" oninput="calcStrategy()">
                 </div>
-                <div>
-                    추천: <span id="contractRec" style="color: var(--accent-green); font-weight:bold; font-size:1.1rem;">-</span> 계약
-                </div>
+                <div>추천: <span id="contractRec" style="color: var(--accent-green); font-weight:bold;">-</span> 계약</div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">📊 Foreigner Proxy (KOSPI 200 Fut)</div>
-            <div style="height: 300px; border-radius: 12px; overflow: hidden;">
+            <div class="card-title">📊 Foreigner Supply (KOSPI 200)</div>
+            
+            <div style="height: 180px; border-radius: 6px; overflow: hidden; margin-bottom: 8px;">
                 <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
                     {
-                    "autosize": true,
-                    "symbol": "KRX:101Q11",
-                    "interval": "5",
-                    "timezone": "Asia/Seoul",
-                    "theme": "dark",
-                    "style": "1",
-                    "locale": "kr",
-                    "enable_publishing": false,
-                    "hide_top_toolbar": true,
-                    "hide_legend": false,
-                    "save_image": false,
-                    "calendar": false,
-                    "hide_volume": true,
-                    "support_host": "https://www.tradingview.com"
+                    "autosize": true, "symbol": "KRX:KOSPI200", "interval": "5", "timezone": "Asia/Seoul", "theme": "dark", "style": "1", "locale": "kr", "hide_top_toolbar": true, "hide_legend": true, "save_image": false, "calendar": false, "hide_volume": true
                     }
                     </script>
                 </div>
             </div>
-            <p style="font-size: 0.8rem; color: var(--text-sub); margin-top: 10px; text-align: center;">
-                * 네이버 데이터 연동 불가(보안 정책). 외국인 수급과 연동된 선물 차트로 대체합니다.
-            </p>
+
+            <button class="naver-btn" onclick="openNaverPopup()">
+                <span>📈 네이버 실시간 수급표 보기</span>
+            </button>
         </div>
 
     </div>
 
-    <footer>
-        Cash is also a position.
-    </footer>
+    <footer>Cash is also a position.</footer>
 
     <script>
+        // 네이버 팝업 함수
+        function openNaverPopup() {
+            window.open(
+                "https://finance.naver.com/sise/sise_trans_style.naver?sosok=01",
+                "NaverSupply",
+                "width=500,height=600,location=no,status=no,scrollbars=yes"
+            );
+        }
+
         let mode = 'long';
 
         function setMode(selectedMode) {
@@ -303,16 +245,16 @@
             if (mode === 'long') {
                 btnLong.className = 'toggle-btn active-long';
                 btnShort.className = 'toggle-btn';
-                tpBox.style.borderColor = 'var(--primary-red)';
+                tpBox.style.borderLeftColor = 'var(--primary-red)';
                 tpVal.style.color = 'var(--primary-red)';
-                slBox.style.borderColor = 'var(--primary-blue)';
+                slBox.style.borderLeftColor = 'var(--primary-blue)';
                 slVal.style.color = 'var(--primary-blue)';
             } else {
                 btnLong.className = 'toggle-btn';
                 btnShort.className = 'toggle-btn active-short';
-                tpBox.style.borderColor = 'var(--primary-blue)';
+                tpBox.style.borderLeftColor = 'var(--primary-blue)';
                 tpVal.style.color = 'var(--primary-blue)';
-                slBox.style.borderColor = 'var(--primary-red)';
+                slBox.style.borderLeftColor = 'var(--primary-red)';
                 slVal.style.color = 'var(--primary-red)';
             }
             calcStrategy();
@@ -323,7 +265,6 @@
             const capitalMillions = parseFloat(document.getElementById('myCapital').value);
             const targetGap = parseFloat(document.getElementById('targetGap').value);
             const stopGap = parseFloat(document.getElementById('stopGap').value);
-
             const tpEl = document.getElementById('tpVal');
             const slEl = document.getElementById('slVal');
             const contractEl = document.getElementById('contractRec');
@@ -333,11 +274,8 @@
             }
 
             let tp, sl;
-            if (mode === 'long') {
-                tp = entry + targetGap; sl = entry - stopGap;
-            } else {
-                tp = entry - targetGap; sl = entry + stopGap;
-            }
+            if (mode === 'long') { tp = entry + targetGap; sl = entry - stopGap; } 
+            else { tp = entry - targetGap; sl = entry + stopGap; }
             tpEl.innerText = tp.toFixed(1);
             slEl.innerText = sl.toFixed(1);
 
@@ -349,10 +287,7 @@
                 contractEl.innerText = maxContracts > 0 ? maxContracts : 0;
             }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            calcStrategy();
-        });
+        document.addEventListener('DOMContentLoaded', () => { calcStrategy(); });
     </script>
 </body>
 </html>
