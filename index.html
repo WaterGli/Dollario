@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sniper Deck Compact</title>
+    <title>달러로 인생역전 v6</title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
     <style>
         :root {
@@ -15,6 +15,7 @@
             --text-main: #ffffff;
             --text-sub: #8e8e93;
             --accent-green: #30d158;
+            --tab-active-bg: #333;
         }
 
         body {
@@ -22,7 +23,7 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 8px; /* 전체 여백 축소 */
+            padding: 8px;
             box-sizing: border-box;
         }
 
@@ -33,24 +34,40 @@
         h1 { font-size: 1.1rem; font-weight: 800; margin: 0; }
         .badge { font-size: 0.6rem; background: #333; padding: 2px 6px; border-radius: 4px; color: #ccc; }
 
-        .main-grid { display: flex; flex-direction: column; gap: 8px; } /* 그리드 간격 축소 */
+        /* --- 탭 스타일 --- */
+        .tab-container {
+            display: flex; gap: 8px; margin-bottom: 12px;
+        }
+        .tab-btn {
+            flex: 1; padding: 10px; border: 1px solid var(--card-border);
+            background: var(--card-bg); color: var(--text-sub);
+            border-radius: 8px; font-weight: bold; font-size: 0.9rem;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--text-main); color: black; border-color: var(--text-main);
+        }
 
-        /* 1. 상단 차트 (높이 축소) */
+        /* 탭 내용물 숨김/표시 처리 */
+        .tab-content { display: none; }
+        .tab-content.active { display: flex; flex-direction: column; gap: 8px; }
+
+
+        /* --- 1. SNIPER 탭 스타일 --- */
+        /* 차트 3개 (높이 160px) */
         .chart-row {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
-            height: 160px; /* 높이 대폭 축소 */
+            height: 160px;
         }
         @media (max-width: 768px) {
             .chart-row { grid-template-columns: 1fr; height: auto; gap: 8px; }
             .chart-container { height: 150px; }
         }
-
         .chart-container {
             background: var(--card-bg); border: 1px solid var(--card-border);
             border-radius: 8px; overflow: hidden;
         }
 
-        /* 공통 카드 스타일 (여백 축소) */
         .card {
             background: var(--card-bg); border: 1px solid var(--card-border);
             border-radius: 10px; padding: 12px;
@@ -60,7 +77,7 @@
             font-weight: 600; display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* 2. 계산기 (초소형) */
+        /* 계산기 스타일 */
         .toggle-container {
             display: flex; background: #222; border-radius: 6px;
             padding: 2px; margin-bottom: 8px;
@@ -73,7 +90,6 @@
         .toggle-btn.active-long { background: var(--primary-red); color: white; }
         .toggle-btn.active-short { background: var(--primary-blue); color: white; }
 
-        /* 입력 필드 가로 정렬 */
         .calc-compact-row {
             display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 6px; margin-bottom: 8px;
         }
@@ -83,16 +99,13 @@
         }
         input[type="number"] {
             width: 100%; background: #222; border: 1px solid var(--card-border);
-            border-radius: 6px; padding: 18px 8px 4px 8px; /* 라벨 공간 확보 */
+            border-radius: 6px; padding: 18px 8px 4px 8px;
             color: white; font-size: 1rem; font-weight: bold; box-sizing: border-box; outline: none;
             text-align: right;
         }
         input:focus { border-color: #555; }
 
-        /* 결과창 */
-        .result-compact {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-        }
+        .result-compact { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .res-box {
             background: #222; padding: 6px 10px; border-radius: 6px;
             display: flex; justify-content: space-between; align-items: center;
@@ -101,20 +114,27 @@
         .res-title { font-size: 0.75rem; color: #888; }
         .res-val { font-size: 1.1rem; font-weight: 800; }
 
-        /* 자금관리 미니 */
         .kelly-mini {
             margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--card-border);
             display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;
         }
-
-        /* 3. 네이버 수급 버튼 */
         .naver-btn {
-            width: 100%; padding: 10px; border-radius: 6px; border: none;
+            width: 100%; padding: 8px; border-radius: 6px; border: none;
             background: #2db400; color: white; font-weight: bold; cursor: pointer;
-            display: flex; justify-content: center; align-items: center; gap: 6px;
-            font-size: 0.9rem; margin-top: 5px;
+            font-size: 0.85rem; margin-top: 0;
         }
-        .naver-btn:active { opacity: 0.8; }
+        .calendar-box { height: 350px; overflow: hidden; border-radius: 8px; }
+
+
+        /* --- 2. INDEX 탭 (2x2 그리드) 스타일 --- */
+        .index-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+            height: calc(100vh - 120px); /* 화면 꽉 차게 */
+        }
+        .index-item {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 8px; overflow: hidden; height: 100%; min-height: 200px;
+        }
 
         footer { margin-top: 20px; text-align: center; color: #333; font-size: 0.6rem; }
     </style>
@@ -123,10 +143,15 @@
 
     <header>
         <h1>Sniper Deck</h1>
-        <span class="badge">Compact</span>
+        <span class="badge">v6.0</span>
     </header>
 
-    <div class="main-grid">
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="switchTab('sniper')">🎯 SNIPER</button>
+        <button class="tab-btn" onclick="switchTab('index')">🌏 INDEX</button>
+    </div>
+
+    <div id="tab-sniper" class="tab-content active">
         
         <div class="chart-row">
             <div class="chart-container">
@@ -157,12 +182,10 @@
 
         <div class="card">
             <div class="card-title">🧮 Calculator</div>
-            
             <div class="toggle-container">
                 <button class="toggle-btn active-long" id="btnLong" onclick="setMode('long')">LONG</button>
                 <button class="toggle-btn" id="btnShort" onclick="setMode('short')">SHORT</button>
             </div>
-
             <div class="calc-compact-row">
                 <div class="input-wrapper">
                     <span class="input-label">진입가</span>
@@ -177,7 +200,6 @@
                     <input type="number" id="stopGap" value="0.4" step="0.1" oninput="calcStrategy()">
                 </div>
             </div>
-            
             <div class="result-compact">
                 <div class="res-box" id="boxTP" style="border-left-color: var(--primary-red);">
                     <span class="res-title">익절(TP)</span>
@@ -188,7 +210,6 @@
                     <span class="res-val" id="slVal" style="color: var(--primary-blue);">-</span>
                 </div>
             </div>
-
             <div class="kelly-mini">
                 <div style="display:flex; align-items:center; gap:5px;">
                     <span style="color:#888;">자본(백만):</span>
@@ -198,41 +219,83 @@
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-title">📊 Foreigner Supply (KOSPI 200)</div>
-            
-            <div style="height: 180px; border-radius: 6px; overflow: hidden; margin-bottom: 8px;">
-                <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-                    {
-                    "autosize": true, "symbol": "KRX:KOSPI200", "interval": "5", "timezone": "Asia/Seoul", "theme": "dark", "style": "1", "locale": "kr", "hide_top_toolbar": true, "hide_legend": true, "save_image": false, "calendar": false, "hide_volume": true
-                    }
+        <button class="naver-btn" onclick="openNaverPopup()">
+            📈 네이버 실시간 외국인 수급표 보기
+        </button>
+
+        <div class="card" style="padding:0;">
+            <div class="calendar-box">
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                    { "colorTheme": "dark", "isTransparent": true, "width": "100%", "height": "100%", "locale": "kr", "importanceFilter": "0,1", "currencyFilter": "USD,KRW,JPY" }
                     </script>
                 </div>
             </div>
-
-            <button class="naver-btn" onclick="openNaverPopup()">
-                <span>📈 네이버 실시간 수급표 보기</span>
-            </button>
         </div>
+    </div>
 
+    <div id="tab-index" class="tab-content">
+        <div class="index-grid">
+            <div class="index-item">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                    { "symbol": "KRX:KOSPI", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true, "chartOnly": false }
+                    </script>
+                </div>
+            </div>
+            <div class="index-item">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                    { "symbol": "TVC:SPX", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true, "chartOnly": false }
+                    </script>
+                </div>
+            </div>
+            <div class="index-item">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                    { "symbol": "TVC:NDX", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true, "chartOnly": false }
+                    </script>
+                </div>
+            </div>
+            <div class="index-item">
+                <div class="tradingview-widget-container" style="height:100%;width:100%">
+                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                    { "symbol": "TVC:NI225", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true, "chartOnly": false }
+                    </script>
+                </div>
+            </div>
+        </div>
     </div>
 
     <footer>Cash is also a position.</footer>
 
     <script>
-        // 네이버 팝업 함수
+        // 탭 전환 함수
+        function switchTab(tabName) {
+            // 모든 탭 숨기기
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            // 선택된 탭 보이기
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // 버튼 활성화
+            // (간단히 텍스트로 찾아서 활성화)
+            const btns = document.querySelectorAll('.tab-btn');
+            if (tabName === 'sniper') btns[0].classList.add('active');
+            else btns[1].classList.add('active');
+        }
+
         function openNaverPopup() {
-            window.open(
-                "https://finance.naver.com/sise/sise_trans_style.naver?sosok=01",
-                "NaverSupply",
-                "width=500,height=600,location=no,status=no,scrollbars=yes"
-            );
+            window.open("https://finance.naver.com/sise/sise_trans_style.naver?sosok=01", "NaverSupply", "width=500,height=600,location=no,status=no,scrollbars=yes");
         }
 
         let mode = 'long';
-
         function setMode(selectedMode) {
             mode = selectedMode;
             const btnLong = document.getElementById('btnLong');
