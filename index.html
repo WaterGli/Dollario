@@ -7,7 +7,7 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
     <style>
         :root {
-            --bg-color: #f2f4f6;
+            --bg-color: #f4f6f8;
             --card-bg: #ffffff;
             --text-main: #191f28;
             --text-sub: #8b95a1;
@@ -28,7 +28,7 @@
             overflow-x: hidden;
         }
 
-        /* === 헤더 === */
+        /* === 헤더 (심플) === */
         header {
             background: var(--card-bg); height: 56px;
             display: flex; align-items: center; padding: 0 16px;
@@ -41,7 +41,7 @@
         }
         .header-title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
 
-        /* === 사이드바 === */
+        /* === 사이드바 (슬라이드 메뉴) === */
         .sidebar {
             position: fixed; top: 0; left: calc(var(--sidebar-width) * -1);
             width: var(--sidebar-width); height: 100vh;
@@ -111,14 +111,26 @@
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
         }
 
-        /* 설정 탭 */
+        /* 설정 탭 (태그) */
         .setting-group { margin-bottom: 24px; }
         .setting-label { font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; }
-        .tag-input-box { display: flex; gap: 8px; margin-bottom: 12px; }
-        .tag-input { flex: 1; padding: 12px; border: 1px solid #e5e8eb; border-radius: 12px; font-size: 0.95rem; outline: none; background: #f9f9f9; }
-        .tag-btn { background: var(--primary-blue); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .tag-input-box {
+            display: flex; gap: 8px; margin-bottom: 12px;
+        }
+        .tag-input {
+            flex: 1; padding: 12px; border: 1px solid #e5e8eb; border-radius: 12px;
+            font-size: 0.95rem; outline: none; background: #f9f9f9;
+        }
+        .tag-btn {
+            background: var(--primary-blue); color: white; border: none; padding: 0 20px;
+            border-radius: 12px; font-weight: 700; cursor: pointer;
+        }
         .tag-list { display: flex; flex-wrap: wrap; gap: 8px; }
-        .tag { background: #e8f3ff; color: var(--primary-blue); padding: 8px 14px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .tag {
+            background: #e8f3ff; color: var(--primary-blue); padding: 8px 14px;
+            border-radius: 20px; font-size: 0.9rem; font-weight: 600;
+            display: flex; align-items: center; gap: 6px; cursor: pointer;
+        }
         .tag:hover { background: #d0e6ff; }
 
         /* 계산기 & 유틸리티 */
@@ -128,7 +140,9 @@
             border-radius: 0; outline: none;
         }
         .calc-input:focus { border-color: var(--primary-blue); }
-        .result-box { background: #f9fafb; border-radius: 16px; padding: 20px; margin-top: 20px; text-align: right; }
+        .result-box {
+            background: #f9fafb; border-radius: 16px; padding: 20px; margin-top: 20px; text-align: right;
+        }
         
         .naver-btn {
             width: 100%; padding: 16px; background: #03C75A; color: white;
@@ -177,13 +191,13 @@
 
             <div class="card" style="margin-top: 20px;">
                 <div class="news-header">
-                    <div class="news-title">🔥 오늘의 환율 속보</div>
+                    <div class="news-title">🔥 실시간 경제 속보</div>
                     <div class="news-refresh" onclick="refreshNewsManual()">
-                        <span id="newsTime">로딩중...</span> ↻
+                        <span id="newsTime">업데이트 중...</span> ↻
                     </div>
                 </div>
                 <ul class="news-list" id="newsList">
-                    <li style="padding:20px; text-align:center; color:#888;">뉴스를 불러오는 중입니다...</li>
+                    <li style="padding:20px; text-align:center; color:#888;">뉴스를 불러오고 있습니다...</li>
                 </ul>
             </div>
         </div>
@@ -228,12 +242,8 @@
                     <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">추가 진입 (진입가 / 수량)</div>
                     <div style="display:flex; gap:10px;">
                         <input type="tel" class="calc-input" id="addPrice" placeholder="진입가" oninput="calcAvg()">
-                        <input type="tel" class="calc-input" id="addQty" placeholder="수량" oninput="syncSlider(this.value)">
+                        <input type="tel" class="calc-input" id="addQty" placeholder="수량" oninput="calcAvg()">
                     </div>
-                </div>
-                
-                <div class="slider-container">
-                    <input type="range" id="qtySlider" min="0" max="100" value="0" oninput="syncInput(this.value)">
                 </div>
 
                 <div class="result-box">
@@ -256,8 +266,8 @@
                 <div class="setting-group">
                     <div class="setting-label">뉴스 키워드 설정</div>
                     <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">
-                        아래 키워드가 포함된 <b>오늘 뉴스만</b> 홈 화면에 표시됩니다.<br>
-                        (키워드가 없으면 오늘의 모든 경제 속보를 보여줍니다.)
+                        아래 키워드가 포함된 뉴스만 홈 화면에 표시됩니다.<br>
+                        (키워드가 없으면 모든 경제 뉴스가 표시됩니다.)
                     </div>
                     <div class="tag-input-box">
                         <input type="text" id="tagInput" class="tag-input" placeholder="키워드 입력 (예: 금리)">
@@ -270,7 +280,7 @@
 
     </div>
 
-    <footer>v26.0 | Designed for Traders</footer>
+    <footer>v25.0 | Designed for Traders</footer>
 
     <script>
         // === 1. 네비게이션 ===
@@ -284,7 +294,7 @@
             }
         }
 
-        const loadedTabs = { home: false, index: false, currency: false, utility: true, routine: true, setting: true };
+        const loadedTabs = { home: false, index: false, currency: false };
 
         function loadTabContent(tabName) {
             if (loadedTabs[tabName]) return;
@@ -306,7 +316,7 @@
             };
 
             if (tabName === 'home') {
-                createWidget('chart-dxy', 'TVC:DXY'); // 공식 DXY 지수 사용
+                createWidget('chart-dxy', 'AMEX:UUP'); // DXY ETF Proxy (안정적)
                 createWidget('chart-usdkrw', 'FX_IDC:USDKRW');
                 createWidget('chart-usdjpy', 'FX_IDC:USDJPY'); 
                 createWidget('chart-usdeur', 'FX_IDC:USDEUR');
@@ -316,6 +326,7 @@
                 createWidget('chart-nikkei', 'OANDA:JP225USD'); 
                 createWidget('chart-us10y', 'TVC:US10Y');
                 
+                // 캘린더
                 const calCon = document.getElementById('calendar-container');
                 if(calCon && calCon.innerHTML.trim() === "") {
                     const s = document.createElement("script");
@@ -350,9 +361,74 @@
             window.open("https://finance.naver.com/sise/sise_trans_style.naver?sosok=01", "NaverSupply", "width=500,height=600,location=no,status=no,scrollbars=yes");
         }
 
-        // === 2. 태그 관리 ===
-        let keywords = ['환율', '달러', '엔화', '유로', '금리', '외환']; // 기본 키워드
+        // === 2. 뉴스 로직 (24시간 + 최신순 + 필터) ===
+        // when:1d 추가로 최근 24시간 뉴스만 강제 로딩
+        const NEWS_API_URL = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://news.google.com/rss/search?q=경제+금융+주식+환율+when:1d&hl=ko&gl=KR&ceid=KR:ko");
+        let keywords = ['환율', '달러', '금리']; // 초기값
 
+        async function fetchNews(isManual = false) {
+            const timeEl = document.getElementById('newsTime');
+            timeEl.innerText = "로딩중...";
+            
+            // 캐시 무시하고 항상 새 데이터 요청 (실시간성 확보)
+            const now = new Date().getTime();
+            const fetchUrl = `${NEWS_API_URL}&_t=${now}`; 
+
+            try {
+                const res = await fetch(fetchUrl);
+                const data = await res.json();
+                
+                if (data.items && data.items.length > 0) {
+                    renderNews(data.items);
+                    timeEl.innerText = `${new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'})}`;
+                }
+            } catch (e) {
+                timeEl.innerText = "연결 실패";
+            }
+        }
+
+        function renderNews(items) {
+            const listEl = document.getElementById('newsList');
+            listEl.innerHTML = "";
+            let count = 0;
+            const uniqueTitles = new Set();
+
+            // 1. 날짜 내림차순 정렬 (최신순)
+            items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+            items.forEach(item => {
+                if (count >= 15) return;
+                
+                // 2. 키워드 필터링 (키워드가 있을 경우에만)
+                if (keywords.length > 0) {
+                    const hasKeyword = keywords.some(key => item.title.includes(key));
+                    if (!hasKeyword) return;
+                }
+
+                if (uniqueTitles.has(item.title)) return;
+                uniqueTitles.add(item.title);
+                
+                const li = document.createElement('li');
+                li.className = 'news-item';
+                const date = new Date(item.pubDate);
+                const timeStr = date.toLocaleTimeString('ko-KR', {hour12: false, hour: '2-digit', minute:'2-digit'});
+
+                li.innerHTML = `
+                    <div>
+                        <div class="news-time">${timeStr}</div>
+                        <a href="${item.link}" target="_blank" class="news-link">${item.title}</a>
+                    </div>
+                `;
+                listEl.appendChild(li);
+                count++;
+            });
+            
+            if(count === 0) listEl.innerHTML = "<li style='padding:20px; text-align:center; color:#999;'>설정된 키워드의 최근 24시간 뉴스가 없습니다.</li>";
+        }
+
+        function refreshNewsManual() { fetchNews(true); }
+
+        // === 3. 태그(설정) 관리 ===
         function renderTags() {
             const container = document.getElementById('tagContainer');
             container.innerHTML = "";
@@ -370,113 +446,6 @@
             const val = input.value.trim();
             if (val && !keywords.includes(val)) {
                 keywords.push(val); renderTags();
-                fetchNews(true); 
-            }
-            input.value = "";
-        }
-
-        function removeTag(index) {
-            keywords.splice(index, 1); renderTags(); fetchNews(true);
-        }
-
-        // === 3. 뉴스 피드 (오늘 뉴스만 필터링) ===
-        const NEWS_API_URL = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://news.google.com/rss/search?q=경제+금융+주식+환율&hl=ko&gl=KR&ceid=KR:ko");
-
-        async function fetchNews(isManual = false) {
-            const CACHE_KEY = 'newsCache26';
-            const CACHE_TIME_KEY = 'newsCacheTime26';
-            const CACHE_DURATION = 300000; // 5분
-
-            const now = new Date().getTime();
-            const lastFetch = localStorage.getItem(CACHE_TIME_KEY);
-            const cachedData = localStorage.getItem(CACHE_KEY);
-            const timeEl = document.getElementById('newsTime');
-
-            if (!isManual && cachedData && lastFetch && (now - lastFetch < CACHE_DURATION)) {
-                renderNews(JSON.parse(cachedData));
-                const dateObj = new Date(parseInt(lastFetch));
-                timeEl.innerText = `업데이트: ${formatTime(dateObj)} (캐시)`;
-                return;
-            }
-
-            timeEl.innerText = "로딩중...";
-            // 캐시 방지 난수 추가
-            const fetchUrl = `${NEWS_API_URL}&_t=${now}`;
-
-            try {
-                const res = await fetch(fetchUrl);
-                const data = await res.json();
-                
-                if (data.items && data.items.length > 0) {
-                    renderNews(data.items);
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(data.items));
-                    localStorage.setItem(CACHE_TIME_KEY, now);
-                    timeEl.innerText = `업데이트: ${formatTime(new Date())}`;
-                }
-            } catch (e) {
-                if (cachedData) {
-                    renderNews(JSON.parse(cachedData));
-                    timeEl.innerText = "갱신 실패 (이전 데이터)";
-                } else timeEl.innerText = "연결 확인 필요";
-            }
-        }
-
-        function formatTime(date) {
-            return date.toLocaleTimeString('ko-KR', {hour12: false, hour: '2-digit', minute:'2-digit'});
-        }
-
-        function renderNews(items) {
-            const listEl = document.getElementById('newsList');
-            listEl.innerHTML = "";
-            let count = 0;
-            const uniqueTitles = new Set();
-            const today = new Date();
-            const todayStr = today.toDateString(); // "Mon Dec 02 2025" 형식
-
-            // 날짜 내림차순 정렬
-            items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-
-            items.forEach(item => {
-                if (count >= 20) return;
-                
-                // 1. 키워드 필터링
-                if (keywords.length > 0) {
-                    const hasKeyword = keywords.some(key => item.title.includes(key));
-                    if (!hasKeyword) return;
-                }
-
-                // 2. 날짜 필터링 (오늘 날짜만 허용)
-                const itemDate = new Date(item.pubDate);
-                if (itemDate.toDateString() !== todayStr) return; // 오늘이 아니면 건너뜀
-
-                // 중복 제목 제거
-                if (uniqueTitles.has(item.title)) return;
-                uniqueTitles.add(item.title);
-                
-                const li = document.createElement('li');
-                li.className = 'news-item';
-                const timeStr = formatTime(itemDate);
-
-                li.innerHTML = `
-                    <div style="min-width:45px; font-size:0.75rem; font-weight:bold; color:var(--primary-blue); text-align:right;">${timeStr}</div>
-                    <div><a href="${item.link}" target="_blank" class="news-link">${item.title}</a></div>
-                `;
-                listEl.appendChild(li);
-                count++;
-            });
-            
-            if(count === 0) {
-                listEl.innerHTML = "<li style='padding:20px; text-align:center; color:#999;'>조건에 맞는 오늘 뉴스가 없습니다.</li>";
-            }
-        }
-
-        function refreshNewsManual() { fetchNews(true); }
-
-        function addTag() {
-            const input = document.getElementById('tagInput');
-            const val = input.value.trim();
-            if (val && !keywords.includes(val)) {
-                keywords.push(val); renderTags();
                 fetchNews(true);
             }
             input.value = "";
@@ -486,43 +455,28 @@
             keywords.splice(index, 1); renderTags(); fetchNews(true);
         }
 
-        // === 3. 계산기 로직 ===
-        let currentPos = 'long';
-        function setPos(pos) {
-            currentPos = pos;
-            const card = document.getElementById('calcCard');
-            const longBtn = document.querySelector('.radio-label.long');
-            const shortBtn = document.querySelector('.radio-label.short');
-            if (pos === 'long') { longBtn.classList.add('active'); shortBtn.classList.remove('active'); card.style.backgroundColor = "var(--bg-long)"; } 
-            else { longBtn.classList.remove('active'); shortBtn.classList.add('active'); card.style.backgroundColor = "var(--bg-short)"; }
-            saveData(); calcAvg();
-        }
-        function parseInput(id) { 
-            const raw = document.getElementById(id).value;
-            const clean = raw.replace(/[^0-9.]/g, ''); 
-            return parseFloat(clean) || 0; 
-        }
-        function syncSlider(val) { document.getElementById('qtySlider').value = val; calcAvg(); }
-        function syncInput(val) { document.getElementById('addQty').value = val; calcAvg(); }
+        // === 4. 계산기 및 메모 ===
+        function parseInput(id) { return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0; }
         
         function calcAvg() {
             const curP = parseInput('curPrice'); const curQ = parseInput('curQty');
             const addP = parseInput('addPrice'); const addQ = parseInput('addQty');
             const totalQ = curQ + addQ;
             let finalAvg = totalQ > 0 ? ((curP * curQ) + (addP * addQ)) / totalQ : 0;
+            
             document.getElementById('finalAvg').innerText = finalAvg > 0 ? finalAvg.toFixed(2) : "0";
             document.getElementById('totalQty').innerText = totalQ + " 계약";
+            
             saveData();
         }
-        function resetCalc() {
-            ['curPrice','curQty','addPrice','addQty'].forEach(id=>document.getElementById(id).value="");
-            document.getElementById('qtySlider').value = 0; setPos('long'); calcAvg();
-        }
+
+        let currentPos = 'long';
+        function setPos(pos) { currentPos = pos; saveData(); }
         function saveData() {
             try { localStorage.setItem('tradingData', JSON.stringify({ curPrice: document.getElementById('curPrice').value, curQty: document.getElementById('curQty').value, addPrice: document.getElementById('addPrice').value, addQty: document.getElementById('addQty').value, pos: currentPos })); } catch(e){}
         }
         function saveMemo() { localStorage.setItem('userMemo', document.getElementById('memoArea').value); }
-        
+
         function loadData() {
             try {
                 const savedTags = localStorage.getItem('userTags');
@@ -534,9 +488,8 @@
                     const d = JSON.parse(saved);
                     document.getElementById('curPrice').value = d.curPrice||""; document.getElementById('curQty').value = d.curQty||"";
                     document.getElementById('addPrice').value = d.addPrice||""; document.getElementById('addQty').value = d.addQty||"";
-                    document.getElementById('qtySlider').value = d.addQty||0;
-                    setPos(d.pos || 'long');
-                } else setPos('long');
+                    calcAvg();
+                }
                 const m = localStorage.getItem('userMemo'); if(m) document.getElementById('memoArea').value = m;
             } catch(e) {}
         }
