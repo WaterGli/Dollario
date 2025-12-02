@@ -27,7 +27,7 @@
             overflow-x: hidden;
         }
 
-        /* === 헤더 & 햄버거 버튼 === */
+        /* 헤더 & 햄버거 */
         header {
             background: var(--card-bg);
             height: 60px; display: flex; align-items: center; padding: 0 20px;
@@ -40,7 +40,7 @@
         }
         h1 { font-size: 1.1rem; font-weight: 800; margin: 0; }
 
-        /* === 사이드바 (Drawer) === */
+        /* 사이드바 */
         .sidebar {
             position: fixed; top: 0; left: calc(var(--sidebar-width) * -1);
             width: var(--sidebar-width); height: 100%;
@@ -67,7 +67,6 @@
         .nav-item.active { color: var(--primary-blue); background: #e8f3ff; }
         .nav-icon { width: 24px; text-align: center; }
 
-        /* 오버레이 (배경 어둡게) */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 150;
@@ -75,37 +74,29 @@
         }
         .overlay.visible { display: block; opacity: 1; }
 
-        /* === 메인 컨텐츠 === */
+        /* 메인 컨텐츠 */
         .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 카드 공통 */
         .card {
             background: var(--card-bg); border-radius: 16px;
             padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
             margin-bottom: 15px;
         }
 
-        /* 차트 그리드 */
-        .grid-2x2 {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;
-        }
+        /* 차트 */
+        .grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .mini-chart {
             background: var(--card-bg); border-radius: 12px; overflow: hidden; height: 160px;
             box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
-
-        /* Currency 그리드 */
         .currency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .currency-item {
-            background: var(--card-bg); border-radius: 12px; overflow: hidden; height: 160px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-        }
+        .currency-item { background: var(--card-bg); border-radius: 12px; overflow: hidden; height: 160px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 
-        /* 평단가 계산기 */
+        /* 계산기 */
         .toggle-row { display: flex; gap: 10px; margin-bottom: 20px; background: #f2f4f6; padding: 4px; border-radius: 12px; }
         .radio-label {
             flex: 1; text-align: center; padding: 10px; border-radius: 10px;
@@ -120,7 +111,6 @@
         .input-group { flex: 1; }
         .input-label { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 6px; display: block; }
         
-        /* 아이폰 키보드 대응 */
         input[type="number"], input[type="tel"], input[type="text"] {
             width: 100%; border: none; border-bottom: 2px solid var(--track-bg);
             background: transparent; padding: 8px 0;
@@ -133,14 +123,10 @@
         .slider-container { margin: 20px 0 10px 0; }
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]:focus { outline: none; }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 6px; cursor: pointer; background: var(--track-bg); border-radius: 3px;
-        }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: var(--track-bg); border-radius: 3px; }
         input[type=range]::-webkit-slider-thumb {
-            height: 24px; width: 24px; border-radius: 50%;
-            background: #ffffff; border: 2px solid var(--primary-blue);
-            cursor: pointer; -webkit-appearance: none; margin-top: -9px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            height: 24px; width: 24px; border-radius: 50%; background: #ffffff; border: 2px solid var(--primary-blue);
+            cursor: pointer; -webkit-appearance: none; margin-top: -9px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
 
         .result-box { background: #f9fafb; border-radius: 12px; padding: 16px; margin-top: 20px; }
@@ -179,10 +165,13 @@
         .tag-close { cursor: pointer; opacity: 0.6; }
 
         /* 루틴 & 메모 */
-        .memo-area { width: 100%; height: 300px; border: 1px solid #e5e8eb; border-radius: 12px; background: #fffcf0; padding: 16px; font-size: 1rem; line-height: 1.6; resize: none; outline: none; box-sizing: border-box; }
+        .routine-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 12px; background: #f9fafb; border-radius: 12px; }
+        .time-badge { background: var(--text-main); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 800; min-width: 50px; text-align: center; }
+        .routine-input { flex: 1; border: none; background: transparent; font-size: 0.95rem; color: var(--text-main); font-weight: 500; }
+        .memo-area { width: 100%; height: 250px; border: 1px solid #e5e8eb; border-radius: 12px; background: #fffcf0; padding: 16px; font-size: 1rem; line-height: 1.6; resize: none; outline: none; box-sizing: border-box; }
         .calendar-box { height: 400px; overflow: hidden; border-radius: 8px; }
         
-        footer { margin-top: 40px; text-align: center; color: var(--text-sub); font-size: 0.7rem; padding-bottom: 20px; }
+        footer { margin-top: 40px; text-align: center; color: var(--text-sub); font-size: 0.7rem; padding-bottom: 20px; border-top: 1px solid #eee; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -190,7 +179,8 @@
     <header>
         <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
         <h1>달러로 인생역전</h1>
-        <div style="width: 24px;"></div> </header>
+        <div style="width: 24px;"></div>
+    </header>
 
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
     <nav id="sidebar" class="sidebar">
@@ -218,7 +208,7 @@
 
             <div class="card" style="margin-top: 15px;">
                 <div class="news-header">
-                    <div class="section-title" style="margin:0;">🔥 실시간 환율 속보</div>
+                    <div class="section-title" style="margin:0;">🔥 실시간 경제 속보</div>
                     <div class="news-update-info">
                         <span class="news-update-time" id="newsTime">로딩중...</span>
                         <button class="refresh-btn" onclick="refreshNewsManual()">↻</button>
@@ -289,6 +279,12 @@
 
         <div id="tab-routine" class="tab-content">
             <div class="card">
+                <div class="section-title">🌅 Morning Routine</div>
+                <div class="routine-item"><span class="time-badge">06:00</span><input type="text" id="routine1" class="routine-input" value="NDF 1개월물 최종 호가 확인" onchange="saveRoutine()"><input type="checkbox" class="routine-check"></div>
+                <div class="routine-item"><span class="time-badge">07:00</span><input type="text" id="routine2" class="routine-input" value="미 증시(반도체) 및 삼성전자 ADR 확인" onchange="saveRoutine()"><input type="checkbox" class="routine-check"></div>
+                <div class="routine-item"><span class="time-badge">09:10</span><input type="text" id="routine3" class="routine-input" value="외국인 코스피 선물 수급 확인" onchange="saveRoutine()"><input type="checkbox" class="routine-check"></div>
+            </div>
+            <div class="card">
                 <div class="section-title">📝 TRADING MEMO</div>
                 <textarea id="memoArea" class="memo-area" placeholder="매매 원칙, 진입 계획 등을 자유롭게 메모하세요. (자동 저장됨)" oninput="saveMemo()"></textarea>
             </div>
@@ -297,6 +293,10 @@
         <div id="tab-setting" class="tab-content">
             <div class="card">
                 <div class="section-title">📢 뉴스 필터 키워드</div>
+                <div style="font-size:0.85rem; color:#666; margin-bottom:15px; line-height:1.4;">
+                    키워드를 등록하면 <b>해당 단어가 포함된 뉴스만</b> 보여줍니다.<br>
+                    키워드가 하나도 없으면 <b>모든 경제 속보</b>를 보여줍니다.
+                </div>
                 <div class="tag-input-area">
                     <input type="text" id="tagInput" class="tag-input" placeholder="키워드 입력 (예: 금리)">
                     <button class="tag-add-btn" onclick="addTag()">추가</button>
@@ -306,64 +306,30 @@
         </div>
     </div>
 
-    <footer>v24.0 | Designed for Traders</footer>
+    <footer>v25.0 | Designed for Traders</footer>
 
     <script>
-        // === 1. 네비게이션 & UI 로직 ===
-        function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            if (sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('visible');
-            } else {
-                sidebar.classList.add('open');
-                overlay.classList.add('visible');
-            }
-        }
-
+        // --- 1. 차트 렌더링 함수 ---
         const loadedTabs = { home: false, index: false, currency: false, utility: true, routine: true, setting: true };
 
-        function loadTabContent(tabName) {
-            if (loadedTabs[tabName]) return;
-            // 1M (1개월) 차트로 변경하여 데이터 공백 방지
-            const chartOpts = { "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1M", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false };
-            
-            const createWidget = (id, sym) => {
-                const con = document.getElementById(id);
-                if(!con) return;
-                con.innerHTML = "";
-                const s = document.createElement("script");
-                s.type = "text/javascript";
-                s.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
-                s.async = true;
-                s.innerHTML = JSON.stringify({ ...chartOpts, "symbol": sym });
-                const wrap = document.createElement("div");
-                wrap.className = "tradingview-widget-container";
-                wrap.style.width="100%"; wrap.style.height="100%";
-                wrap.appendChild(document.createElement("div")).className="tradingview-widget-container__widget";
-                wrap.appendChild(s);
-                con.appendChild(wrap);
-            };
-
-            if (tabName === 'home') {
-                createWidget('chart-dxy', 'TVC:DXY'); 
-                createWidget('chart-usdkrw', 'FX_IDC:USDKRW');
-                createWidget('chart-usdjpy', 'FX_IDC:USDJPY'); 
-                createWidget('chart-usdeur', 'FX_IDC:USDEUR');
-            } else if (tabName === 'index') {
-                createWidget('chart-spx', 'FOREXCOM:SPX500'); 
-                createWidget('chart-nas', 'FOREXCOM:NAS100');
-                createWidget('chart-nikkei', 'OANDA:JP225USD'); 
-                createWidget('chart-us10y', 'TVC:US10Y');
-                renderCalendar();
-            } else if (tabName === 'currency') {
-                createWidget('chart-cny', 'FX_IDC:USDCNY'); 
-                createWidget('chart-eur', 'FX_IDC:USDEUR');
-                createWidget('chart-gbp', 'FX_IDC:USDGBP'); 
-                createWidget('chart-chf', 'FX_IDC:USDCHF');
-            }
-            loadedTabs[tabName] = true;
+        function renderWidget(containerId, symbol) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = "";
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
+            script.async = true;
+            // DXY 안정성을 위해 1M 기간 설정
+            script.innerHTML = JSON.stringify({
+                "symbol": symbol, "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1M", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false
+            });
+            const widgetContainer = document.createElement("div");
+            widgetContainer.className = "tradingview-widget-container";
+            widgetContainer.style.width = "100%"; widgetContainer.style.height = "100%";
+            widgetContainer.appendChild(document.createElement("div")).className = "tradingview-widget-container__widget";
+            widgetContainer.appendChild(script);
+            container.appendChild(widgetContainer);
         }
 
         function renderCalendar() {
@@ -379,16 +345,47 @@
             container.appendChild(script);
         }
 
+        function loadTabContent(tabName) {
+            if (loadedTabs[tabName]) return;
+            if (tabName === 'home') {
+                renderWidget('chart-dxy', 'TVC:DXY');  // DXY 심볼 변경 (안정성)
+                renderWidget('chart-usdkrw', 'FX_IDC:USDKRW');
+                renderWidget('chart-usdjpy', 'FX_IDC:USDJPY'); 
+                renderWidget('chart-usdeur', 'FX_IDC:USDEUR');
+            } else if (tabName === 'index') {
+                renderWidget('chart-spx', 'FOREXCOM:SPX500'); 
+                renderWidget('chart-nas', 'FOREXCOM:NAS100');
+                renderWidget('chart-nikkei', 'OANDA:JP225USD'); 
+                renderWidget('chart-us10y', 'TVC:US10Y');
+                renderCalendar();
+            } else if (tabName === 'currency') {
+                renderWidget('chart-cny', 'FX_IDC:USDCNY'); 
+                renderWidget('chart-eur', 'FX_IDC:USDEUR');
+                renderWidget('chart-gbp', 'FX_IDC:USDGBP'); 
+                renderWidget('chart-chf', 'FX_IDC:USDCHF');
+            }
+            loadedTabs[tabName] = true;
+        }
+
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open'); overlay.classList.remove('visible');
+            } else {
+                sidebar.classList.add('open'); overlay.classList.add('visible');
+            }
+        }
+
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
             
-            // 사이드바 메뉴 활성화 표시
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             const activeNav = document.querySelector(`.nav-item[onclick="switchTab('${tabName}')"]`);
             if(activeNav) activeNav.classList.add('active');
 
-            toggleMenu(); // 메뉴 닫기
+            toggleMenu();
             loadTabContent(tabName);
         }
 
@@ -396,8 +393,8 @@
             window.open("https://finance.naver.com/sise/sise_trans_style.naver?sosok=01", "NaverSupply", "width=500,height=600,location=no,status=no,scrollbars=yes");
         }
 
-        // === 2. 태그(키워드) 관리 ===
-        let keywords = ['환율', '달러', '엔화', '유로', '금리', '외환']; // 기본
+        // === 2. 태그 관리 ===
+        let keywords = [];
 
         function renderTags() {
             const container = document.getElementById('tagContainer');
@@ -416,7 +413,7 @@
             const val = input.value.trim();
             if (val && !keywords.includes(val)) {
                 keywords.push(val); renderTags();
-                fetchNews(true); 
+                fetchNews(true); // 태그 변경 시 뉴스 즉시 갱신
             }
             input.value = "";
         }
@@ -425,13 +422,14 @@
             keywords.splice(index, 1); renderTags(); fetchNews(true);
         }
 
-        // === 3. 뉴스 피드 (캐시 우회 + 정렬) ===
-        const NEWS_API_URL = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://news.google.com/rss/search?q=경제+금융+주식+환율&hl=ko&gl=KR&ceid=KR:ko");
+        // === 3. 뉴스 피드 (스마트 필터링) ===
+        // 1. 넓은 범위로 가져옴
+        const NEWS_API_URL = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://news.google.com/rss/search?q=경제+금융+시장+주식&hl=ko&gl=KR&ceid=KR:ko");
 
         async function fetchNews(isManual = false) {
-            const CACHE_KEY = 'newsCache24';
-            const CACHE_TIME_KEY = 'newsCacheTime24';
-            const CACHE_DURATION = 300000; // 5분
+            const CACHE_KEY = 'newsCache25';
+            const CACHE_TIME_KEY = 'newsCacheTime25';
+            const CACHE_DURATION = 300000;
 
             const now = new Date().getTime();
             const lastFetch = localStorage.getItem(CACHE_TIME_KEY);
@@ -446,8 +444,7 @@
             }
 
             timeEl.innerText = "로딩중...";
-            // 캐시 방지용 난수 추가
-            const fetchUrl = `${NEWS_API_URL}&_t=${now}`;
+            const fetchUrl = `${NEWS_API_URL}&_t=${now}`; // 캐시 방지 난수
 
             try {
                 const res = await fetch(fetchUrl);
@@ -478,15 +475,17 @@
             const uniqueTitles = new Set();
             const todayDate = new Date().getDate();
 
-            // 날짜 내림차순 정렬 (최신순)
+            // 날짜 최신순 정렬
             items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
             items.forEach(item => {
                 if (count >= 15) return;
                 
-                // 키워드 필터링
-                const hasKeyword = keywords.some(key => item.title.includes(key));
-                if (!hasKeyword) return;
+                // 필터 로직: 키워드가 있으면 OR 조건으로 검사, 없으면 통과
+                if (keywords.length > 0) {
+                    const hasKeyword = keywords.some(key => item.title.includes(key));
+                    if (!hasKeyword) return;
+                }
 
                 if (uniqueTitles.has(item.title)) return;
                 uniqueTitles.add(item.title);
@@ -546,10 +545,15 @@
         function saveData() {
             try { localStorage.setItem('tradingData', JSON.stringify({ curPrice: document.getElementById('curPrice').value, curQty: document.getElementById('curQty').value, addPrice: document.getElementById('addPrice').value, addQty: document.getElementById('addQty').value, pos: currentPos })); } catch(e){}
         }
+        function saveRoutine() {
+            const rData = { r1: document.getElementById('routine1').value, r2: document.getElementById('routine2').value, r3: document.getElementById('routine3').value };
+            localStorage.setItem('routineData', JSON.stringify(rData));
+        }
         function saveMemo() { localStorage.setItem('userMemo', document.getElementById('memoArea').value); }
         
         function loadData() {
             try {
+                // 키워드 로드
                 const savedTags = localStorage.getItem('userTags');
                 if(savedTags) keywords = JSON.parse(savedTags);
                 renderTags();
@@ -562,7 +566,8 @@
                     document.getElementById('qtySlider').value = d.addQty||0;
                     setPos(d.pos || 'long');
                 } else setPos('long');
-                
+                const r = JSON.parse(localStorage.getItem('routineData'));
+                if(r) { document.getElementById('routine1').value = r.r1||""; document.getElementById('routine2').value = r.r2||""; document.getElementById('routine3').value = r.r3||""; }
                 const m = localStorage.getItem('userMemo'); if(m) document.getElementById('memoArea').value = m;
             } catch(e) {}
         }
