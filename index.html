@@ -7,16 +7,18 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
     <style>
         :root {
-            --bg-color: #f2f4f6;
+            --bg-color: #f0f3fa;
             --card-bg: #ffffff;
-            --text-main: #191f28;
-            --text-sub: #8b95a1;
-            --primary-blue: #3182f6;
-            --accent-red: #f04452;
-            --accent-blue: #3182f6;
-            --track-bg: #e5e8eb;
-            --tab-active-bg: #e8f3ff;
-            --tab-active-text: #3182f6;
+            --card-border: #e0e3eb;
+            --text-main: #1d1d1f;
+            --text-sub: #86868b;
+            --primary-blue: #2962ff;
+            --accent-red: #ff3b30;
+            --accent-blue: #007aff;
+            --track-bg: #e5e5ea;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --bg-long: #fff5f5;
+            --bg-short: #f0f7ff;
         }
 
         body {
@@ -28,124 +30,152 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 탭 스타일 (아이콘 전용) */
+        /* 탭 스타일 */
         .tab-container {
-            display: flex; justify-content: space-between; margin-bottom: 12px;
-            background: #ffffff; padding: 8px 12px; border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex; gap: 4px; margin-bottom: 12px;
+            background: #e8ecef; padding: 3px; border-radius: 10px;
+            overflow-x: auto; white-space: nowrap;
         }
         .tab-btn {
-            flex: 1; border: none; background: transparent;
-            font-size: 1.4rem; cursor: pointer; padding: 4px;
-            border-radius: 8px; transition: all 0.2s; opacity: 0.4;
+            flex: 1; padding: 10px 0; border: none; background: transparent;
+            color: var(--text-sub); border-radius: 8px; font-weight: 700; font-size: 0.8rem;
+            cursor: pointer; transition: all 0.2s ease; text-align: center;
+            min-width: 60px;
         }
         .tab-btn.active {
-            opacity: 1; background: var(--tab-active-bg); transform: scale(1.1);
+            background: var(--card-bg); color: var(--primary-blue);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-
         .tab-content { display: none; }
         .tab-content.active { display: flex; flex-direction: column; gap: 12px; }
 
         /* 카드 공통 */
         .card {
-            background: var(--card-bg); border-radius: 16px;
-            padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm);
+            transition: background-color 0.3s ease;
         }
 
-        /* 2x2 그리드 */
+        /* 차트 그리드 */
         .grid-2x2 {
             display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 0;
         }
         .mini-chart {
-            background: var(--card-bg); border-radius: 12px; overflow: hidden; height: 160px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 12px; overflow: hidden; height: 160px;
         }
+        .currency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .currency-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; height: 160px; }
 
-        /* 평단가 계산기 스타일 */
-        .toggle-row { display: flex; gap: 10px; margin-bottom: 20px; background: #f2f4f6; padding: 4px; border-radius: 12px; }
-        .radio-label {
-            flex: 1; text-align: center; padding: 10px; border-radius: 10px;
-            font-weight: 800; font-size: 0.95rem; cursor: pointer; color: #b0b8c1;
-            transition: all 0.2s;
+        /* === 태그(Tag) 스타일 === */
+        .tag-input-area { display: flex; gap: 8px; margin-bottom: 10px; }
+        .tag-input {
+            flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 0.9rem; outline: none; background: #f9f9f9;
         }
-        .radio-label.long.active { background: #fff; color: var(--accent-red); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .radio-label.short.active { background: #fff; color: var(--accent-blue); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .tag-add-btn {
+            padding: 0 15px; background: var(--primary-blue); color: white; border: none;
+            border-radius: 8px; font-weight: 700; cursor: pointer;
+        }
+        .tag-container {
+            display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px;
+        }
+        .tag {
+            background: #e8f0fe; color: var(--primary-blue); padding: 6px 10px;
+            border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+            display: flex; align-items: center; gap: 6px; border: 1px solid #d2e3fc;
+        }
+        .tag-close { cursor: pointer; font-size: 1rem; line-height: 1; opacity: 0.6; }
+        .tag-close:hover { opacity: 1; }
+
+        /* === 메모장(List) 스타일 === */
+        .memo-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .memo-item {
+            background: #fffcf0; border: 1px solid #efe8d0; padding: 12px; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.95rem; color: #444; box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        .memo-delete { color: #aaa; cursor: pointer; padding: 4px; font-size: 1.1rem; }
+        .memo-delete:hover { color: var(--accent-red); }
+
+        /* 평단가 계산기 */
+        .toggle-row { display: flex; gap: 20px; margin-bottom: 20px; justify-content: center; }
+        .radio-label {
+            font-size: 1rem; font-weight: 800; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; opacity: 0.4; transition: opacity 0.2s;
+        }
+        .radio-label.active { opacity: 1; }
+        .radio-label.long.active { color: var(--accent-red); }
+        .radio-label.short.active { color: var(--accent-blue); }
         
-        .section-title { font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .section-title { font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .input-row { display: flex; gap: 10px; margin-bottom: 12px; }
         .input-group { flex: 1; }
-        .input-label { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 6px; display: block; }
+        .input-label { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 4px; display: block; }
         
-        input[type="number"], input[type="tel"], input[type="text"] {
+        input[type="text"].calc-input, input[type="tel"].calc-input {
             width: 100%; border: none; border-bottom: 2px solid var(--track-bg);
-            background: transparent; padding: 8px 0;
-            font-size: 1.2rem; font-weight: 700; color: var(--text-main);
+            background: transparent; padding: 6px 0;
+            font-size: 1.1rem; font-weight: 700; color: var(--text-main);
             text-align: right; outline: none; transition: border-color 0.2s;
             box-sizing: border-box; border-radius: 0;
         }
-        input:focus { border-color: var(--primary-blue); }
+        input.calc-input:focus { border-color: var(--primary-blue); }
 
-        .slider-container { margin: 20px 0 10px 0; }
+        .slider-container { margin: 15px 0 10px 0; }
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]:focus { outline: none; }
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%; height: 6px; cursor: pointer; background: var(--track-bg); border-radius: 3px;
         }
         input[type=range]::-webkit-slider-thumb {
-            height: 24px; width: 24px; border-radius: 50%;
+            height: 20px; width: 20px; border-radius: 50%;
             background: #ffffff; border: 2px solid var(--primary-blue);
-            cursor: pointer; -webkit-appearance: none; margin-top: -9px;
+            cursor: pointer; -webkit-appearance: none; margin-top: -8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
 
         .result-box {
-            background: #f9fafb; border-radius: 12px; padding: 16px; margin-top: 20px;
+            background: rgba(255,255,255,0.6); border-radius: 12px; padding: 15px; margin-top: 20px;
+            border: 1px solid rgba(0,0,0,0.05);
         }
         .final-price-row { display: flex; justify-content: space-between; align-items: flex-end; }
-        .final-price { font-size: 2rem; font-weight: 800; line-height: 1; color: var(--text-main); }
-        .final-qty { font-size: 0.95rem; font-weight: 600; color: var(--text-sub); }
+        .final-price { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--text-main); }
+        .final-qty { font-size: 0.9rem; font-weight: 700; color: var(--text-sub); }
 
         .naver-btn {
-            width: 100%; padding: 14px; border: none; border-radius: 14px;
+            width: 100%; padding: 12px; border: none; border-radius: 12px;
             background: #03C75A; color: white; font-weight: 700;
-            font-size: 1rem; cursor: pointer; margin-top: 8px;
-            box-shadow: 0 4px 10px rgba(3, 199, 90, 0.2);
+            font-size: 0.95rem; cursor: pointer; margin-top: 8px;
+            box-shadow: 0 4px 6px rgba(3, 199, 90, 0.2);
         }
-        .reset-btn { font-size: 0.75rem; padding: 6px 10px; background: #f2f4f6; border-radius: 6px; color: #666; border: none; cursor: pointer; }
+        .reset-btn { font-size: 0.7rem; padding: 4px 8px; background: #eee; border-radius: 4px; color: #666; border: none; cursor: pointer; }
 
         /* 뉴스 피드 */
-        .news-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #f2f4f6; }
+        .news-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
         .news-update-info { display: flex; align-items: center; gap: 8px; }
         .news-update-time { font-size: 0.75rem; color: var(--text-sub); }
-        .refresh-btn { background: none; border: 1px solid #e5e8eb; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display:flex; align-items:center; justify-content:center; color:#666; }
+        .refresh-btn { background: none; border: 1px solid #ddd; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display:flex; align-items:center; justify-content:center; color:#666; }
         
         .news-list { list-style: none; padding: 0; margin: 0; }
-        .news-item { padding: 12px 0; border-bottom: 1px solid #f2f4f6; display: flex; align-items: flex-start; gap: 12px; }
-        .news-item:last-child { border-bottom: none; }
+        .news-item { padding: 12px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; gap: 10px; }
         .news-link {
             text-decoration: none; color: var(--text-main); font-size: 0.95rem; line-height: 1.4;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
         }
-        
-        /* 루틴 & 메모 */
-        .routine-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 12px; background: #f9fafb; border-radius: 12px; }
-        .time-badge { background: var(--text-main); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 800; min-width: 50px; text-align: center; }
-        .routine-input { flex: 1; border: none; background: transparent; font-size: 0.95rem; color: var(--text-main); font-weight: 500; }
-        .memo-area { width: 100%; height: 250px; border: 1px solid var(--card-border); border-radius: 12px; background: #fffbf0; padding: 16px; font-size: 1rem; line-height: 1.6; resize: none; outline: none; box-sizing: border-box; }
-        
         .calendar-box { height: 400px; overflow: hidden; border-radius: 8px; }
         
-        footer { margin-top: 40px; text-align: center; color: var(--text-sub); font-size: 0.7rem; padding-bottom: 20px; }
+        footer { margin-top: 40px; text-align: center; color: var(--text-sub); font-size: 0.7rem; border-top: 1px solid #eee; padding-top: 15px; }
     </style>
 </head>
 <body>
 
     <div class="tab-container">
-        <button class="tab-btn active" onclick="switchTab('home')">🏠</button>
-        <button class="tab-btn" onclick="switchTab('index')">🌏</button>
-        <button class="tab-btn" onclick="switchTab('currency')">💱</button>
-        <button class="tab-btn" onclick="switchTab('utility')">🛠️</button>
-        <button class="tab-btn" onclick="switchTab('routine')">📜</button>
+        <button class="tab-btn active" onclick="switchTab('home')">🏠 HOME</button>
+        <button class="tab-btn" onclick="switchTab('index')">🌏 INDEX</button>
+        <button class="tab-btn" onclick="switchTab('currency')">💱 CURRENCY</button>
+        <button class="tab-btn" onclick="switchTab('utility')">🛠️ UTILITY</button>
+        <button class="tab-btn" onclick="switchTab('routine')">📜 ROUTINE</button>
     </div>
 
     <div id="tab-home" class="tab-content active">
@@ -166,6 +196,8 @@
                     <button class="refresh-btn" onclick="refreshNewsManual()">↻</button>
                 </div>
             </div>
+            <div id="activeTagsHome" class="tag-container" style="margin-bottom:10px; overflow-x:auto; flex-wrap:nowrap;">
+                </div>
             <ul class="news-list" id="newsList">
                 <li style="padding:10px; color:#888; font-size:0.9rem;">뉴스를 불러오는 중입니다...</li>
             </ul>
@@ -185,20 +217,24 @@
     </div>
 
     <div id="tab-currency" class="tab-content">
-        <div class="currency-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div class="mini-chart" id="chart-cny"></div>
-            <div class="mini-chart" id="chart-eur"></div>
-            <div class="mini-chart" id="chart-gbp"></div>
-            <div class="mini-chart" id="chart-chf"></div>
+        <div class="currency-grid">
+            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDCNY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
+            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDEUR", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
+            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDGBP", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
+            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDCHF", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
         </div>
     </div>
 
     <div id="tab-utility" class="tab-content">
         
         <div class="card">
-            <div class="section-title">📢 뉴스 키워드 필터 설정</div>
-            <div style="font-size:0.8rem; color:#888; margin-bottom:8px;">보고 싶은 뉴스 키워드를 쉼표(,)로 구분해 입력하세요.</div>
-            <input type="text" id="userKeywords" class="routine-input" style="border:1px solid #ddd; padding:10px; border-radius:8px; width:100%; box-sizing:border-box;" placeholder="예: 비트코인, 금리, 테슬라" onchange="updateKeywords()">
+            <div class="section-title">📢 뉴스 키워드 관리</div>
+            <div class="tag-input-area">
+                <input type="text" id="tagInput" class="tag-input" placeholder="키워드 입력 (예: 금리)">
+                <button class="tag-add-btn" onclick="addTag()">추가</button>
+            </div>
+            <div id="tagContainer" class="tag-container">
+                </div>
         </div>
 
         <div class="card" id="calcCard">
@@ -212,18 +248,18 @@
                 <button class="reset-btn" onclick="resetCalc()">초기화</button>
             </div>
             <div class="input-row">
-                <div class="input-group"><span class="input-label">평단가</span><input type="tel" id="curPrice" placeholder="0" oninput="calcAvg()"></div>
-                <div class="input-group"><span class="input-label">수량</span><input type="tel" id="curQty" placeholder="0" oninput="calcAvg()"></div>
+                <div class="input-group"><span class="input-label">평단가</span><input type="text" inputmode="decimal" class="calc-input" id="curPrice" placeholder="0" oninput="calcAvg()"></div>
+                <div class="input-group"><span class="input-label">수량</span><input type="text" inputmode="decimal" class="calc-input" id="curQty" placeholder="0" oninput="calcAvg()"></div>
             </div>
 
             <div class="section-title">추가 진입</div>
             <div class="input-row">
-                <div class="input-group"><span class="input-label">진입가</span><input type="tel" id="addPrice" placeholder="0" oninput="calcAvg()"></div>
-                <div class="input-group"><span class="input-label">수량</span><input type="tel" id="addQty" placeholder="0" oninput="syncSlider(this.value)"></div>
+                <div class="input-group"><span class="input-label">진입가</span><input type="text" inputmode="decimal" class="calc-input" id="addPrice" placeholder="0" oninput="calcAvg()"></div>
+                <div class="input-group"><span class="input-label">수량</span><input type="text" inputmode="decimal" class="calc-input" id="addQty" placeholder="0" oninput="syncSlider(this.value)"></div>
             </div>
             
             <div class="slider-container">
-                <input type="range" id="qtySlider" min="0" max="50" value="0" oninput="syncInput(this.value)">
+                <input type="range" id="qtySlider" min="0" max="100" value="0" oninput="syncInput(this.value)">
             </div>
 
             <div class="result-box">
@@ -238,21 +274,22 @@
 
     <div id="tab-routine" class="tab-content">
         <div class="card">
-            <div class="section-title">🌅 Morning Routine</div>
-            <div class="routine-item"><span class="time-badge">06:00</span><input type="text" id="routine1" class="routine-input" value="NDF 1개월물 최종 호가 확인" onchange="saveRoutine()"><input type="checkbox" class="routine-check"></div>
-            <div class="routine-item"><span class="time-badge">07:00</span><input type="text" id="routine2" class="routine-input" value="미 증시(반도체) 및 삼성전자 ADR 확인" onchange="saveRoutine()"><input type="checkbox" class="routine-check"></div>
-            <div class="routine-item"><span class="time-badge">09:10</span><input type="text" id="routine3" class="routine-input" value="외국인 코스피 선물 수급 확인" onchange="saveRoutine()"><input type="checkbox" class="routine-check"></div>
-        </div>
-        <div class="card">
             <div class="section-title">📝 TRADING MEMO</div>
-            <textarea id="memoArea" class="memo-area" placeholder="매매 원칙, 진입 계획 등을 자유롭게 메모하세요." oninput="saveMemo()"></textarea>
+            
+            <div class="tag-input-area">
+                <input type="text" id="memoInput" class="tag-input" placeholder="새로운 메모 입력...">
+                <button class="tag-add-btn" onclick="addMemo()">+</button>
+            </div>
+
+            <ul id="memoList" class="memo-list">
+                </ul>
         </div>
     </div>
 
-    <footer>Designed for Traders. | v22.0</footer>
+    <footer>Designed for Traders. | v23.0</footer>
 
     <script>
-        // --- 1. 차트 렌더링 (1D로 변경) ---
+        // --- 1. 차트 렌더링 ---
         const loadedTabs = { home: false, index: false, currency: false, utility: true, routine: true };
 
         function renderWidget(containerId, symbol) {
@@ -263,7 +300,6 @@
             script.type = "text/javascript";
             script.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
             script.async = true;
-            // dateRange: "1D" (최근 1일)
             script.innerHTML = JSON.stringify({
                 "symbol": symbol, "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false
             });
@@ -319,13 +355,58 @@
             window.open("https://finance.naver.com/sise/sise_trans_style.naver?sosok=01", "NaverSupply", "width=500,height=600,location=no,status=no,scrollbars=yes");
         }
 
-        // --- 2. 뉴스 피드 ---
-        const NEWS_API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent("https://news.google.com/rss/search?q=경제+금융+주식+환율&hl=ko&gl=KR&ceid=KR:ko")}`;
+        // --- 2. 태그(키워드) 관리 시스템 ---
+        let keywords = ['환율', '달러', '엔화', '유로', '금리', '외환']; // 기본값
 
+        function renderTags() {
+            const container = document.getElementById('tagContainer');
+            container.innerHTML = "";
+            keywords.forEach((key, index) => {
+                const tag = document.createElement('span');
+                tag.className = 'tag';
+                tag.innerHTML = `${key} <span class="tag-close" onclick="removeTag(${index})">×</span>`;
+                container.appendChild(tag);
+            });
+            localStorage.setItem('userTags', JSON.stringify(keywords));
+            
+            // 홈 화면에도 태그 표시 (옵션)
+            const homeTags = document.getElementById('activeTagsHome');
+            if(homeTags) {
+                homeTags.innerHTML = "";
+                keywords.forEach(key => {
+                    const tag = document.createElement('span');
+                    tag.className = 'tag';
+                    tag.style.backgroundColor = '#f0f0f0';
+                    tag.style.border = 'none';
+                    tag.style.color = '#666';
+                    tag.innerText = key;
+                    homeTags.appendChild(tag);
+                });
+            }
+        }
+
+        function addTag() {
+            const input = document.getElementById('tagInput');
+            const val = input.value.trim();
+            if (val && !keywords.includes(val)) {
+                keywords.push(val);
+                renderTags();
+                fetchNews(true); // 태그 추가 시 뉴스 갱신
+            }
+            input.value = "";
+        }
+
+        function removeTag(index) {
+            keywords.splice(index, 1);
+            renderTags();
+            fetchNews(true);
+        }
+
+        // --- 3. 뉴스 피드 ---
         async function fetchNews(isManual = false) {
-            const CACHE_KEY = 'newsCache22';
-            const CACHE_TIME_KEY = 'newsCacheTime22';
-            const CACHE_DURATION = 300000;
+            const CACHE_KEY = 'newsCache23';
+            const CACHE_TIME_KEY = 'newsCacheTime23';
+            const CACHE_DURATION = 300000; // 5분
 
             const now = new Date().getTime();
             const lastFetch = localStorage.getItem(CACHE_TIME_KEY);
@@ -340,22 +421,16 @@
             }
 
             timeEl.innerText = "로딩중...";
-
-            const userKeywordStr = localStorage.getItem('userKeywords') || "";
-            const userKeywords = userKeywordStr.split(',').map(k => k.trim()).filter(k => k.length > 0);
-            const defaultKeywords = ['환율', '달러', '엔화', '유로', '금리', '외환', 'USD', 'KRW', 'JPY'];
-            const allKeywords = [...defaultKeywords, ...userKeywords];
+            const RSS_URL = "https://news.google.com/rss/search?q=경제+금융+주식+환율&hl=ko&gl=KR&ceid=KR:ko";
+            const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
 
             try {
-                const res = await fetch(NEWS_API_URL);
+                const res = await fetch(API_URL);
                 const data = await res.json();
                 
                 if (data.items && data.items.length > 0) {
-                    const filtered = data.items.filter(item => allKeywords.some(key => item.title.includes(key)));
-                    filtered.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-
-                    renderNews(filtered);
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(filtered));
+                    renderNews(data.items);
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(data.items));
                     localStorage.setItem(CACHE_TIME_KEY, now);
                     timeEl.innerText = `업데이트: ${formatTime(new Date())}`;
                 }
@@ -378,7 +453,15 @@
             const uniqueTitles = new Set();
             const todayDate = new Date().getDate();
 
-            items.forEach(item => {
+            // 필터링
+            const filteredItems = items.filter(item => 
+                keywords.some(key => item.title.includes(key))
+            );
+            
+            // 날짜순 정렬
+            filteredItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+            filteredItems.forEach(item => {
                 if (count >= 15) return;
                 if (uniqueTitles.has(item.title)) return;
                 uniqueTitles.add(item.title);
@@ -396,26 +479,65 @@
                 listEl.appendChild(li);
                 count++;
             });
+
+            if(count === 0) {
+                listEl.innerHTML = "<li style='padding:10px; color:#888; text-align:center;'>해당 키워드의 뉴스가 없습니다.</li>";
+            }
         }
 
         function refreshNewsManual() { fetchNews(true); }
-        function updateKeywords() {
-            const input = document.getElementById('userKeywords');
-            localStorage.setItem('userKeywords', input.value);
-            fetchNews(true);
+
+        // --- 4. 메모장 로직 ---
+        let memos = [];
+
+        function renderMemos() {
+            const list = document.getElementById('memoList');
+            list.innerHTML = "";
+            memos.forEach((memo, index) => {
+                const li = document.createElement('li');
+                li.className = 'memo-item';
+                li.innerHTML = `
+                    <span>${memo}</span>
+                    <span class="memo-delete" onclick="deleteMemo(${index})">×</span>
+                `;
+                list.appendChild(li);
+            });
+            localStorage.setItem('userMemos', JSON.stringify(memos));
         }
 
-        // --- 3. 계산기 ---
+        function addMemo() {
+            const input = document.getElementById('memoInput');
+            const val = input.value.trim();
+            if(val) {
+                memos.push(val);
+                renderMemos();
+                input.value = "";
+            }
+        }
+
+        function deleteMemo(index) {
+            memos.splice(index, 1);
+            renderMemos();
+        }
+
+        // --- 5. 계산기 로직 ---
         let currentPos = 'long';
         function setPos(pos) {
             currentPos = pos;
+            const card = document.getElementById('calcCard');
             const longBtn = document.querySelector('.radio-label.long');
             const shortBtn = document.querySelector('.radio-label.short');
-            if (pos === 'long') { longBtn.classList.add('active'); shortBtn.classList.remove('active'); } 
-            else { longBtn.classList.remove('active'); shortBtn.classList.add('active'); }
+            if (pos === 'long') { longBtn.classList.add('active'); shortBtn.classList.remove('active'); card.style.backgroundColor = "var(--bg-long)"; } 
+            else { longBtn.classList.remove('active'); shortBtn.classList.add('active'); card.style.backgroundColor = "var(--bg-short)"; }
             saveData(); calcAvg();
         }
-        function parseInput(id) { return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0; }
+        
+        function parseInput(id) { 
+            const raw = document.getElementById(id).value;
+            const clean = raw.replace(/[^0-9.]/g, ''); 
+            return parseFloat(clean) || 0; 
+        }
+        
         function syncSlider(val) { document.getElementById('qtySlider').value = val; calcAvg(); }
         function syncInput(val) { document.getElementById('addQty').value = val; calcAvg(); }
         
@@ -428,6 +550,7 @@
             document.getElementById('totalQty').innerText = totalQ + " 계약";
             saveData();
         }
+        
         function resetCalc() {
             ['curPrice','curQty','addPrice','addQty'].forEach(id=>document.getElementById(id).value="");
             document.getElementById('qtySlider').value = 0; setPos('long'); calcAvg();
@@ -435,14 +558,20 @@
         function saveData() {
             try { localStorage.setItem('tradingData', JSON.stringify({ curPrice: document.getElementById('curPrice').value, curQty: document.getElementById('curQty').value, addPrice: document.getElementById('addPrice').value, addQty: document.getElementById('addQty').value, pos: currentPos })); } catch(e){}
         }
-        function saveRoutine() {
-            localStorage.setItem('routineData', JSON.stringify({ r1: document.getElementById('routine1').value, r2: document.getElementById('routine2').value, r3: document.getElementById('routine3').value }));
-        }
-        function saveMemo() { localStorage.setItem('userMemo', document.getElementById('memoArea').value); }
-        
+
         function loadData() {
             try {
-                document.getElementById('userKeywords').value = localStorage.getItem('userKeywords') || "";
+                // 키워드 로드
+                const savedTags = localStorage.getItem('userTags');
+                if(savedTags) keywords = JSON.parse(savedTags);
+                renderTags();
+
+                // 메모 로드
+                const savedMemos = localStorage.getItem('userMemos');
+                if(savedMemos) memos = JSON.parse(savedMemos);
+                renderMemos();
+
+                // 계산기 로드
                 const saved = localStorage.getItem('tradingData');
                 if (saved) {
                     const d = JSON.parse(saved);
@@ -451,9 +580,6 @@
                     document.getElementById('qtySlider').value = d.addQty||0;
                     setPos(d.pos || 'long');
                 } else setPos('long');
-                const r = JSON.parse(localStorage.getItem('routineData'));
-                if(r) { document.getElementById('routine1').value = r.r1||""; document.getElementById('routine2').value = r.r2||""; document.getElementById('routine3').value = r.r3||""; }
-                const m = localStorage.getItem('userMemo'); if(m) document.getElementById('memoArea').value = m;
             } catch(e) {}
         }
 
