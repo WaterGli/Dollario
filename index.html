@@ -28,7 +28,7 @@
             overflow-x: hidden;
         }
 
-        /* === 헤더 (심플) === */
+        /* === 헤더 === */
         header {
             background: var(--card-bg); height: 56px;
             display: flex; align-items: center; padding: 0 16px;
@@ -39,9 +39,9 @@
             background: none; border: none; font-size: 1.5rem; cursor: pointer;
             padding: 8px; margin-right: 10px; color: var(--text-main);
         }
-        .header-title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); }
+        .header-title { font-size: 1.2rem; font-weight: 800; color: var(--text-main); }
 
-        /* === 사이드바 (슬라이드 메뉴) === */
+        /* === 사이드바 === */
         .sidebar {
             position: fixed; top: 0; left: calc(var(--sidebar-width) * -1);
             width: var(--sidebar-width); height: 100vh;
@@ -53,9 +53,9 @@
         .sidebar.open { transform: translateX(var(--sidebar-width)); }
         
         .sidebar-logo {
-            height: 100px; display: flex; align-items: center; justify-content: center;
+            height: 80px; display: flex; align-items: center; justify-content: center;
             font-size: 1.5rem; font-weight: 900; color: var(--primary-blue);
-            border-bottom: 1px solid #f2f4f6;
+            border-bottom: 1px solid #f2f4f6; letter-spacing: 1px;
         }
         
         .nav-list { list-style: none; padding: 20px 0; margin: 0; }
@@ -166,14 +166,14 @@
 
     <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
     <nav id="sidebar" class="sidebar">
-        <div class="sidebar-logo">SAVE</div>
+        <div class="sidebar-logo">USD/KRW</div>
         <ul class="nav-list">
-            <li class="nav-item active" onclick="switchTab('home')"><span class="nav-icon">🏠</span> 홈 (뉴스/속보)</li>
-            <li class="nav-item" onclick="switchTab('index')"><span class="nav-icon">🌏</span> 주요 지수</li>
-            <li class="nav-item" onclick="switchTab('currency')"><span class="nav-icon">💱</span> 통화쌍</li>
-            <li class="nav-item" onclick="switchTab('utility')"><span class="nav-icon">🛠️</span> 유틸리티</li>
-            <li class="nav-item" onclick="switchTab('routine')"><span class="nav-icon">📜</span> 루틴/메모</li>
-            <li class="nav-item" onclick="switchTab('setting')"><span class="nav-icon">⚙️</span> 설정</li>
+            <li class="nav-item active" onclick="switchTab('home')"><span class="nav-icon">🏠</span> HOME</li>
+            <li class="nav-item" onclick="switchTab('index')"><span class="nav-icon">🌏</span> Index</li>
+            <li class="nav-item" onclick="switchTab('currency')"><span class="nav-icon">💱</span> Currency</li>
+            <li class="nav-item" onclick="switchTab('utility')"><span class="nav-icon">🛠️</span> Utility</li>
+            <li class="nav-item" onclick="switchTab('routine')"><span class="nav-icon">📜</span> Memo</li>
+            <li class="nav-item" onclick="switchTab('setting')"><span class="nav-icon">⚙️</span> Setting</li>
         </ul>
     </nav>
 
@@ -191,13 +191,13 @@
 
             <div class="card" style="margin-top: 20px;">
                 <div class="news-header">
-                    <div class="news-title">🔥 실시간 경제 속보</div>
+                    <div class="news-title">🔥 오늘의 환율 속보</div>
                     <div class="news-refresh" onclick="refreshNewsManual()">
-                        <span id="newsTime">업데이트 중...</span> ↻
+                        <span id="newsTime">로딩중...</span> ↻
                     </div>
                 </div>
                 <ul class="news-list" id="newsList">
-                    <li style="padding:20px; text-align:center; color:#888;">뉴스를 불러오고 있습니다...</li>
+                    <li style="padding:20px; text-align:center; color:#888;">뉴스를 불러오는 중입니다...</li>
                 </ul>
             </div>
         </div>
@@ -242,8 +242,12 @@
                     <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">추가 진입 (진입가 / 수량)</div>
                     <div style="display:flex; gap:10px;">
                         <input type="tel" class="calc-input" id="addPrice" placeholder="진입가" oninput="calcAvg()">
-                        <input type="tel" class="calc-input" id="addQty" placeholder="수량" oninput="calcAvg()">
+                        <input type="tel" class="calc-input" id="addQty" placeholder="수량" oninput="syncSlider(this.value)">
                     </div>
+                </div>
+                
+                <div class="slider-container">
+                    <input type="range" id="qtySlider" min="0" max="100" value="0" oninput="syncInput(this.value)">
                 </div>
 
                 <div class="result-box">
@@ -266,8 +270,8 @@
                 <div class="setting-group">
                     <div class="setting-label">뉴스 키워드 설정</div>
                     <div style="font-size:0.85rem; color:#666; margin-bottom:10px;">
-                        아래 키워드가 포함된 뉴스만 홈 화면에 표시됩니다.<br>
-                        (키워드가 없으면 모든 경제 뉴스가 표시됩니다.)
+                        아래 키워드가 포함된 <b>오늘 뉴스만</b> 홈 화면에 표시됩니다.<br>
+                        (키워드가 없으면 오늘의 모든 경제 속보를 보여줍니다.)
                     </div>
                     <div class="tag-input-box">
                         <input type="text" id="tagInput" class="tag-input" placeholder="키워드 입력 (예: 금리)">
@@ -280,53 +284,57 @@
 
     </div>
 
-    <footer>v25.0 | Designed for Traders</footer>
+    <footer>v26.1 | Designed for Traders</footer>
 
     <script>
-        // === 1. 네비게이션 ===
-        function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            if (sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open'); overlay.classList.remove('visible');
-            } else {
-                sidebar.classList.add('open'); overlay.classList.add('visible');
-            }
+        // === 1. 차트 렌더링 함수 ---
+        const loadedTabs = { home: false, index: false, currency: false, utility: true, routine: true, setting: true };
+
+        function renderWidget(containerId, symbol) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = "";
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
+            script.async = true;
+            script.innerHTML = JSON.stringify({
+                "symbol": symbol, "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1M", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false
+            });
+            const widgetContainer = document.createElement("div");
+            widgetContainer.className = "tradingview-widget-container";
+            widgetContainer.style.width = "100%"; widgetContainer.style.height = "100%";
+            widgetContainer.appendChild(document.createElement("div")).className = "tradingview-widget-container__widget";
+            widgetContainer.appendChild(script);
+            container.appendChild(widgetContainer);
         }
 
-        const loadedTabs = { home: false, index: false, currency: false };
+        function renderCalendar() {
+            const container = document.getElementById('calendar-container');
+            if(!container || container.innerHTML.trim() !== "") return;
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
+            script.async = true;
+            script.innerHTML = JSON.stringify({
+                "colorTheme": "light", "isTransparent": true, "width": "100%", "height": "100%", "locale": "kr", "importanceFilter": "0,1", "currencyFilter": "USD,KRW,JPY"
+            });
+            container.appendChild(script);
+        }
 
         function loadTabContent(tabName) {
             if (loadedTabs[tabName]) return;
-            const commonOpts = { "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1M", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false };
-            
-            const createWidget = (id, sym) => {
-                const con = document.getElementById(id);
-                if(!con) return;
-                con.innerHTML = "";
-                const s = document.createElement("script");
-                s.type = "text/javascript";
-                s.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
-                s.async = true;
-                s.innerHTML = JSON.stringify({ ...commonOpts, "symbol": sym });
-                const wrap = document.createElement("div"); wrap.className="tradingview-widget-container"; wrap.style.width="100%"; wrap.style.height="100%";
-                wrap.appendChild(document.createElement("div")).className="tradingview-widget-container__widget";
-                wrap.appendChild(s);
-                con.appendChild(wrap);
-            };
-
             if (tabName === 'home') {
-                createWidget('chart-dxy', 'AMEX:UUP'); // DXY ETF Proxy (안정적)
-                createWidget('chart-usdkrw', 'FX_IDC:USDKRW');
-                createWidget('chart-usdjpy', 'FX_IDC:USDJPY'); 
-                createWidget('chart-usdeur', 'FX_IDC:USDEUR');
+                renderWidget('chart-dxy', 'TVC:DXY'); 
+                renderWidget('chart-usdkrw', 'FX_IDC:USDKRW');
+                renderWidget('chart-usdjpy', 'FX_IDC:USDJPY'); 
+                renderWidget('chart-usdeur', 'FX_IDC:USDEUR');
             } else if (tabName === 'index') {
-                createWidget('chart-spx', 'FOREXCOM:SPX500'); 
-                createWidget('chart-nas', 'FOREXCOM:NAS100');
-                createWidget('chart-nikkei', 'OANDA:JP225USD'); 
-                createWidget('chart-us10y', 'TVC:US10Y');
+                renderWidget('chart-spx', 'FOREXCOM:SPX500'); 
+                renderWidget('chart-nas', 'FOREXCOM:NAS100');
+                renderWidget('chart-nikkei', 'OANDA:JP225USD'); 
+                renderWidget('chart-us10y', 'TVC:US10Y');
                 
-                // 캘린더
                 const calCon = document.getElementById('calendar-container');
                 if(calCon && calCon.innerHTML.trim() === "") {
                     const s = document.createElement("script");
@@ -337,12 +345,22 @@
                     calCon.appendChild(s);
                 }
             } else if (tabName === 'currency') {
-                createWidget('chart-cny', 'FX_IDC:USDCNY'); 
-                createWidget('chart-eur', 'FX_IDC:USDEUR');
-                createWidget('chart-gbp', 'FX_IDC:USDGBP'); 
-                createWidget('chart-chf', 'FX_IDC:USDCHF');
+                renderWidget('chart-cny', 'FX_IDC:USDCNY'); 
+                renderWidget('chart-eur', 'FX_IDC:USDEUR');
+                renderWidget('chart-gbp', 'FX_IDC:USDGBP'); 
+                renderWidget('chart-chf', 'FX_IDC:USDCHF');
             }
             loadedTabs[tabName] = true;
+        }
+
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open'); overlay.classList.remove('visible');
+            } else {
+                sidebar.classList.add('open'); overlay.classList.add('visible');
+            }
         }
 
         function switchTab(tabName) {
@@ -361,18 +379,28 @@
             window.open("https://finance.naver.com/sise/sise_trans_style.naver?sosok=01", "NaverSupply", "width=500,height=600,location=no,status=no,scrollbars=yes");
         }
 
-        // === 2. 뉴스 로직 (24시간 + 최신순 + 필터) ===
-        // when:1d 추가로 최근 24시간 뉴스만 강제 로딩
-        const NEWS_API_URL = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://news.google.com/rss/search?q=경제+금융+주식+환율+when:1d&hl=ko&gl=KR&ceid=KR:ko");
-        let keywords = ['환율', '달러', '금리']; // 초기값
+        // === 2. 뉴스 피드 ---
+        const NEWS_API_URL = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://news.google.com/rss/search?q=경제+금융+주식+환율&hl=ko&gl=KR&ceid=KR:ko");
 
         async function fetchNews(isManual = false) {
-            const timeEl = document.getElementById('newsTime');
-            timeEl.innerText = "로딩중...";
-            
-            // 캐시 무시하고 항상 새 데이터 요청 (실시간성 확보)
+            const CACHE_KEY = 'newsCache26';
+            const CACHE_TIME_KEY = 'newsCacheTime26';
+            const CACHE_DURATION = 300000; 
+
             const now = new Date().getTime();
-            const fetchUrl = `${NEWS_API_URL}&_t=${now}`; 
+            const lastFetch = localStorage.getItem(CACHE_TIME_KEY);
+            const cachedData = localStorage.getItem(CACHE_KEY);
+            const timeEl = document.getElementById('newsTime');
+
+            if (!isManual && cachedData && lastFetch && (now - lastFetch < CACHE_DURATION)) {
+                renderNews(JSON.parse(cachedData));
+                const dateObj = new Date(parseInt(lastFetch));
+                timeEl.innerText = `업데이트: ${formatTime(dateObj)} (캐시)`;
+                return;
+            }
+
+            timeEl.innerText = "로딩중...";
+            const fetchUrl = `${NEWS_API_URL}&_t=${now}`;
 
             try {
                 const res = await fetch(fetchUrl);
@@ -380,11 +408,20 @@
                 
                 if (data.items && data.items.length > 0) {
                     renderNews(data.items);
-                    timeEl.innerText = `${new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'})}`;
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(data.items));
+                    localStorage.setItem(CACHE_TIME_KEY, now);
+                    timeEl.innerText = `업데이트: ${formatTime(new Date())}`;
                 }
             } catch (e) {
-                timeEl.innerText = "연결 실패";
+                if (cachedData) {
+                    renderNews(JSON.parse(cachedData));
+                    timeEl.innerText = "갱신 실패 (이전 데이터)";
+                } else timeEl.innerText = "연결 확인 필요";
             }
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('ko-KR', {hour12: false, hour: '2-digit', minute:'2-digit'});
         }
 
         function renderNews(items) {
@@ -392,43 +429,47 @@
             listEl.innerHTML = "";
             let count = 0;
             const uniqueTitles = new Set();
+            const today = new Date();
+            const todayStr = today.toDateString(); 
 
-            // 1. 날짜 내림차순 정렬 (최신순)
             items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
             items.forEach(item => {
-                if (count >= 15) return;
+                if (count >= 20) return;
                 
-                // 2. 키워드 필터링 (키워드가 있을 경우에만)
                 if (keywords.length > 0) {
                     const hasKeyword = keywords.some(key => item.title.includes(key));
                     if (!hasKeyword) return;
                 }
+
+                const itemDate = new Date(item.pubDate);
+                if (itemDate.toDateString() !== todayStr) return; // 오늘 뉴스만 표시
 
                 if (uniqueTitles.has(item.title)) return;
                 uniqueTitles.add(item.title);
                 
                 const li = document.createElement('li');
                 li.className = 'news-item';
-                const date = new Date(item.pubDate);
-                const timeStr = date.toLocaleTimeString('ko-KR', {hour12: false, hour: '2-digit', minute:'2-digit'});
+                const timeStr = formatTime(itemDate);
 
                 li.innerHTML = `
-                    <div>
-                        <div class="news-time">${timeStr}</div>
-                        <a href="${item.link}" target="_blank" class="news-link">${item.title}</a>
-                    </div>
+                    <div style="min-width:45px; font-size:0.75rem; font-weight:bold; color:var(--primary-blue); text-align:right;">${timeStr}</div>
+                    <div><a href="${item.link}" target="_blank" class="news-link">${item.title}</a></div>
                 `;
                 listEl.appendChild(li);
                 count++;
             });
             
-            if(count === 0) listEl.innerHTML = "<li style='padding:20px; text-align:center; color:#999;'>설정된 키워드의 최근 24시간 뉴스가 없습니다.</li>";
+            if(count === 0) {
+                listEl.innerHTML = "<li style='padding:20px; text-align:center; color:#999;'>조건에 맞는 오늘 뉴스가 없습니다.</li>";
+            }
         }
 
         function refreshNewsManual() { fetchNews(true); }
 
-        // === 3. 태그(설정) 관리 ===
+        // === 3. 태그 관리 ===
+        let keywords = ['환율', '달러', '엔화', '유로', '금리', '외환']; 
+
         function renderTags() {
             const container = document.getElementById('tagContainer');
             container.innerHTML = "";
@@ -455,28 +496,39 @@
             keywords.splice(index, 1); renderTags(); fetchNews(true);
         }
 
-        // === 4. 계산기 및 메모 ===
+        // === 4. 계산기 로직 ===
+        let currentPos = 'long';
+        function setPos(pos) {
+            currentPos = pos;
+            const card = document.getElementById('calcCard');
+            const longBtn = document.querySelector('.radio-label.long');
+            const shortBtn = document.querySelector('.radio-label.short');
+            if (pos === 'long') { longBtn.classList.add('active'); shortBtn.classList.remove('active'); card.style.backgroundColor = "var(--bg-long)"; } 
+            else { longBtn.classList.remove('active'); shortBtn.classList.add('active'); card.style.backgroundColor = "var(--bg-short)"; }
+            saveData(); calcAvg();
+        }
         function parseInput(id) { return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0; }
+        function syncSlider(val) { document.getElementById('qtySlider').value = val; calcAvg(); }
+        function syncInput(val) { document.getElementById('addQty').value = val; calcAvg(); }
         
         function calcAvg() {
             const curP = parseInput('curPrice'); const curQ = parseInput('curQty');
             const addP = parseInput('addPrice'); const addQ = parseInput('addQty');
             const totalQ = curQ + addQ;
             let finalAvg = totalQ > 0 ? ((curP * curQ) + (addP * addQ)) / totalQ : 0;
-            
             document.getElementById('finalAvg').innerText = finalAvg > 0 ? finalAvg.toFixed(2) : "0";
             document.getElementById('totalQty').innerText = totalQ + " 계약";
-            
             saveData();
         }
-
-        let currentPos = 'long';
-        function setPos(pos) { currentPos = pos; saveData(); }
+        function resetCalc() {
+            ['curPrice','curQty','addPrice','addQty'].forEach(id=>document.getElementById(id).value="");
+            document.getElementById('qtySlider').value = 0; setPos('long'); calcAvg();
+        }
         function saveData() {
             try { localStorage.setItem('tradingData', JSON.stringify({ curPrice: document.getElementById('curPrice').value, curQty: document.getElementById('curQty').value, addPrice: document.getElementById('addPrice').value, addQty: document.getElementById('addQty').value, pos: currentPos })); } catch(e){}
         }
         function saveMemo() { localStorage.setItem('userMemo', document.getElementById('memoArea').value); }
-
+        
         function loadData() {
             try {
                 const savedTags = localStorage.getItem('userTags');
@@ -488,8 +540,9 @@
                     const d = JSON.parse(saved);
                     document.getElementById('curPrice').value = d.curPrice||""; document.getElementById('curQty').value = d.curQty||"";
                     document.getElementById('addPrice').value = d.addPrice||""; document.getElementById('addQty').value = d.addQty||"";
-                    calcAvg();
-                }
+                    document.getElementById('qtySlider').value = d.addQty||0;
+                    setPos(d.pos || 'long');
+                } else setPos('long');
                 const m = localStorage.getItem('userMemo'); if(m) document.getElementById('memoArea').value = m;
             } catch(e) {}
         }
