@@ -7,308 +7,363 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
     <style>
         :root {
-            --bg-color: #f0f3fa;
+            --bg-color: #f2f4f6;
             --card-bg: #ffffff;
-            --card-border: #e0e3eb;
-            --text-main: #1d1d1f;
-            --text-sub: #86868b;
-            --primary-blue: #2962ff;
-            --accent-red: #ff3b30;
-            --accent-blue: #007aff;
-            --track-bg: #e5e5ea;
-            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            --bg-long: #fff5f5;
-            --bg-short: #f0f7ff;
+            --text-main: #191f28;
+            --text-sub: #8b95a1;
+            --primary-blue: #3182f6;
+            --accent-red: #f04452;
+            --accent-blue: #3182f6;
+            --track-bg: #e5e8eb;
+            --sidebar-width: 260px;
         }
 
         body {
             font-family: 'Pretendard', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            margin: 0; padding: 10px;
+            margin: 0; padding: 0;
             box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        /* 탭 스타일 */
-        .tab-container {
-            display: flex; gap: 4px; margin-bottom: 12px;
-            background: #e8ecef; padding: 3px; border-radius: 10px;
-            overflow-x: auto; white-space: nowrap;
+        /* === 헤더 & 햄버거 버튼 === */
+        header {
+            background: var(--card-bg);
+            height: 60px; display: flex; align-items: center; padding: 0 20px;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
         }
-        .tab-btn {
-            flex: 1; padding: 10px 0; border: none; background: transparent;
-            color: var(--text-sub); border-radius: 8px; font-weight: 700; font-size: 0.8rem;
-            cursor: pointer; transition: all 0.2s ease; text-align: center;
-            min-width: 60px;
+        .hamburger-btn {
+            font-size: 1.5rem; cursor: pointer; background: none; border: none;
+            padding: 5px; margin-right: 15px; color: var(--text-main);
         }
-        .tab-btn.active {
-            background: var(--card-bg); color: var(--primary-blue);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        h1 { font-size: 1.1rem; font-weight: 800; margin: 0; }
+
+        /* === 사이드바 (Drawer) === */
+        .sidebar {
+            position: fixed; top: 0; left: calc(var(--sidebar-width) * -1);
+            width: var(--sidebar-width); height: 100%;
+            background: var(--card-bg); z-index: 200;
+            transition: left 0.3s ease-in-out;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column;
         }
-        .tab-content { display: none; }
-        .tab-content.active { display: flex; flex-direction: column; gap: 12px; }
+        .sidebar.open { left: 0; }
+        
+        .sidebar-header {
+            height: 60px; display: flex; align-items: center; padding-left: 25px;
+            font-weight: 900; font-size: 1.2rem; color: var(--primary-blue);
+            border-bottom: 1px solid #f2f4f6;
+        }
+        
+        .nav-list { list-style: none; padding: 0; margin: 20px 0; }
+        .nav-item {
+            padding: 15px 25px; font-size: 1rem; font-weight: 600; color: var(--text-main);
+            cursor: pointer; display: flex; align-items: center; gap: 10px;
+            transition: background 0.2s;
+        }
+        .nav-item:active { background: #f2f4f6; }
+        .nav-item.active { color: var(--primary-blue); background: #e8f3ff; }
+        .nav-icon { width: 24px; text-align: center; }
+
+        /* 오버레이 (배경 어둡게) */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 150;
+            display: none; opacity: 0; transition: opacity 0.3s;
+        }
+        .overlay.visible { display: block; opacity: 1; }
+
+        /* === 메인 컨텐츠 === */
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 카드 공통 */
         .card {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm);
-            transition: background-color 0.3s ease;
+            background: var(--card-bg); border-radius: 16px;
+            padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            margin-bottom: 15px;
         }
 
         /* 차트 그리드 */
         .grid-2x2 {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 0;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;
         }
         .mini-chart {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 12px; overflow: hidden; height: 160px;
+            background: var(--card-bg); border-radius: 12px; overflow: hidden; height: 160px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
+
+        /* Currency 그리드 */
         .currency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .currency-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; height: 160px; }
-
-        /* === 태그(Tag) 스타일 === */
-        .tag-input-area { display: flex; gap: 8px; margin-bottom: 10px; }
-        .tag-input {
-            flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px;
-            font-size: 0.9rem; outline: none; background: #f9f9f9;
+        .currency-item {
+            background: var(--card-bg); border-radius: 12px; overflow: hidden; height: 160px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
-        .tag-add-btn {
-            padding: 0 15px; background: var(--primary-blue); color: white; border: none;
-            border-radius: 8px; font-weight: 700; cursor: pointer;
-        }
-        .tag-container {
-            display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px;
-        }
-        .tag {
-            background: #e8f0fe; color: var(--primary-blue); padding: 6px 10px;
-            border-radius: 20px; font-size: 0.85rem; font-weight: 600;
-            display: flex; align-items: center; gap: 6px; border: 1px solid #d2e3fc;
-        }
-        .tag-close { cursor: pointer; font-size: 1rem; line-height: 1; opacity: 0.6; }
-        .tag-close:hover { opacity: 1; }
-
-        /* === 메모장(List) 스타일 === */
-        .memo-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-        .memo-item {
-            background: #fffcf0; border: 1px solid #efe8d0; padding: 12px; border-radius: 8px;
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.95rem; color: #444; box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-        }
-        .memo-delete { color: #aaa; cursor: pointer; padding: 4px; font-size: 1.1rem; }
-        .memo-delete:hover { color: var(--accent-red); }
 
         /* 평단가 계산기 */
-        .toggle-row { display: flex; gap: 20px; margin-bottom: 20px; justify-content: center; }
+        .toggle-row { display: flex; gap: 10px; margin-bottom: 20px; background: #f2f4f6; padding: 4px; border-radius: 12px; }
         .radio-label {
-            font-size: 1rem; font-weight: 800; cursor: pointer;
-            display: flex; align-items: center; gap: 6px; opacity: 0.4; transition: opacity 0.2s;
+            flex: 1; text-align: center; padding: 10px; border-radius: 10px;
+            font-weight: 800; font-size: 0.95rem; cursor: pointer; color: #b0b8c1;
+            transition: all 0.2s;
         }
-        .radio-label.active { opacity: 1; }
-        .radio-label.long.active { color: var(--accent-red); }
-        .radio-label.short.active { color: var(--accent-blue); }
+        .radio-label.long.active { background: #fff; color: var(--accent-red); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .radio-label.short.active { background: #fff; color: var(--accent-blue); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         
-        .section-title { font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .section-title { font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .input-row { display: flex; gap: 10px; margin-bottom: 12px; }
         .input-group { flex: 1; }
-        .input-label { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 4px; display: block; }
+        .input-label { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 6px; display: block; }
         
-        input[type="text"].calc-input, input[type="tel"].calc-input {
+        /* 아이폰 키보드 대응 */
+        input[type="number"], input[type="tel"], input[type="text"] {
             width: 100%; border: none; border-bottom: 2px solid var(--track-bg);
-            background: transparent; padding: 6px 0;
-            font-size: 1.1rem; font-weight: 700; color: var(--text-main);
+            background: transparent; padding: 8px 0;
+            font-size: 1.2rem; font-weight: 700; color: var(--text-main);
             text-align: right; outline: none; transition: border-color 0.2s;
             box-sizing: border-box; border-radius: 0;
         }
-        input.calc-input:focus { border-color: var(--primary-blue); }
+        input:focus { border-color: var(--primary-blue); }
 
-        .slider-container { margin: 15px 0 10px 0; }
+        .slider-container { margin: 20px 0 10px 0; }
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]:focus { outline: none; }
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%; height: 6px; cursor: pointer; background: var(--track-bg); border-radius: 3px;
         }
         input[type=range]::-webkit-slider-thumb {
-            height: 20px; width: 20px; border-radius: 50%;
+            height: 24px; width: 24px; border-radius: 50%;
             background: #ffffff; border: 2px solid var(--primary-blue);
-            cursor: pointer; -webkit-appearance: none; margin-top: -8px;
+            cursor: pointer; -webkit-appearance: none; margin-top: -9px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
 
-        .result-box {
-            background: rgba(255,255,255,0.6); border-radius: 12px; padding: 15px; margin-top: 20px;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
+        .result-box { background: #f9fafb; border-radius: 12px; padding: 16px; margin-top: 20px; }
         .final-price-row { display: flex; justify-content: space-between; align-items: flex-end; }
-        .final-price { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--text-main); }
-        .final-qty { font-size: 0.9rem; font-weight: 700; color: var(--text-sub); }
+        .final-price { font-size: 2rem; font-weight: 800; line-height: 1; color: var(--text-main); }
+        .final-qty { font-size: 0.95rem; font-weight: 600; color: var(--text-sub); }
 
         .naver-btn {
-            width: 100%; padding: 12px; border: none; border-radius: 12px;
+            width: 100%; padding: 14px; border: none; border-radius: 14px;
             background: #03C75A; color: white; font-weight: 700;
-            font-size: 0.95rem; cursor: pointer; margin-top: 8px;
-            box-shadow: 0 4px 6px rgba(3, 199, 90, 0.2);
+            font-size: 1rem; cursor: pointer; margin-top: 8px;
+            box-shadow: 0 4px 10px rgba(3, 199, 90, 0.2);
         }
-        .reset-btn { font-size: 0.7rem; padding: 4px 8px; background: #eee; border-radius: 4px; color: #666; border: none; cursor: pointer; }
+        .reset-btn { font-size: 0.75rem; padding: 6px 10px; background: #f2f4f6; border-radius: 6px; color: #666; border: none; cursor: pointer; }
 
         /* 뉴스 피드 */
-        .news-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
+        .news-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #f2f4f6; }
         .news-update-info { display: flex; align-items: center; gap: 8px; }
         .news-update-time { font-size: 0.75rem; color: var(--text-sub); }
-        .refresh-btn { background: none; border: 1px solid #ddd; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display:flex; align-items:center; justify-content:center; color:#666; }
+        .refresh-btn { background: none; border: 1px solid #e5e8eb; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display:flex; align-items:center; justify-content:center; color:#666; }
         
         .news-list { list-style: none; padding: 0; margin: 0; }
-        .news-item { padding: 12px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; gap: 10px; }
+        .news-item { padding: 12px 0; border-bottom: 1px solid #f2f4f6; display: flex; align-items: flex-start; gap: 12px; }
+        .news-item:last-child { border-bottom: none; }
         .news-link {
             text-decoration: none; color: var(--text-main); font-size: 0.95rem; line-height: 1.4;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
         }
+        
+        /* 설정 (태그) */
+        .tag-input-area { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tag-input { flex: 1; border: 1px solid #e5e8eb !important; border-radius: 8px !important; padding: 12px !important; text-align: left !important; font-weight: normal !important; }
+        .tag-add-btn { background: var(--primary-blue); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { background: #e8f3ff; color: var(--primary-blue); padding: 8px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .tag-close { cursor: pointer; opacity: 0.6; }
+
+        /* 루틴 & 메모 */
+        .memo-area { width: 100%; height: 300px; border: 1px solid #e5e8eb; border-radius: 12px; background: #fffcf0; padding: 16px; font-size: 1rem; line-height: 1.6; resize: none; outline: none; box-sizing: border-box; }
         .calendar-box { height: 400px; overflow: hidden; border-radius: 8px; }
         
-        footer { margin-top: 40px; text-align: center; color: var(--text-sub); font-size: 0.7rem; border-top: 1px solid #eee; padding-top: 15px; }
+        footer { margin-top: 40px; text-align: center; color: var(--text-sub); font-size: 0.7rem; padding-bottom: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="tab-container">
-        <button class="tab-btn active" onclick="switchTab('home')">🏠 HOME</button>
-        <button class="tab-btn" onclick="switchTab('index')">🌏 INDEX</button>
-        <button class="tab-btn" onclick="switchTab('currency')">💱 CURRENCY</button>
-        <button class="tab-btn" onclick="switchTab('utility')">🛠️ UTILITY</button>
-        <button class="tab-btn" onclick="switchTab('routine')">📜 ROUTINE</button>
-    </div>
+    <header>
+        <button class="hamburger-btn" onclick="toggleMenu()">☰</button>
+        <h1>달러로 인생역전</h1>
+        <div style="width: 24px;"></div> </header>
 
-    <div id="tab-home" class="tab-content active">
-        <div class="grid-2x2">
-            <div class="mini-chart" id="chart-dxy"></div>
-            <div class="mini-chart" id="chart-usdkrw"></div>
-            <div class="mini-chart" id="chart-usdjpy"></div>
-            <div class="mini-chart" id="chart-usdeur"></div>
-        </div>
+    <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
+    <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header">MENU</div>
+        <ul class="nav-list">
+            <li class="nav-item active" onclick="switchTab('home')"><span class="nav-icon">🏠</span> HOME</li>
+            <li class="nav-item" onclick="switchTab('index')"><span class="nav-icon">🌏</span> INDEX</li>
+            <li class="nav-item" onclick="switchTab('currency')"><span class="nav-icon">💱</span> CURRENCY</li>
+            <li class="nav-item" onclick="switchTab('utility')"><span class="nav-icon">🛠️</span> UTILITY</li>
+            <li class="nav-item" onclick="switchTab('routine')"><span class="nav-icon">📜</span> ROUTINE</li>
+            <li class="nav-item" onclick="switchTab('setting')"><span class="nav-icon">⚙️</span> SETTING</li>
+        </ul>
+    </nav>
 
-        <button class="naver-btn" onclick="openNaverPopup()">📈 네이버 수급표 팝업</button>
+    <div class="container">
+        <div id="tab-home" class="tab-content active">
+            <div class="grid-2x2">
+                <div class="mini-chart" id="chart-dxy"></div>
+                <div class="mini-chart" id="chart-usdkrw"></div>
+                <div class="mini-chart" id="chart-usdjpy"></div>
+                <div class="mini-chart" id="chart-usdeur"></div>
+            </div>
 
-        <div class="card">
-            <div class="news-header">
-                <div class="section-title" style="margin:0;">🔥 실시간 환율 속보</div>
-                <div class="news-update-info">
-                    <span class="news-update-time" id="newsTime">로딩중...</span>
-                    <button class="refresh-btn" onclick="refreshNewsManual()">↻</button>
+            <button class="naver-btn" onclick="openNaverPopup()">📈 네이버 수급표 팝업</button>
+
+            <div class="card" style="margin-top: 15px;">
+                <div class="news-header">
+                    <div class="section-title" style="margin:0;">🔥 실시간 환율 속보</div>
+                    <div class="news-update-info">
+                        <span class="news-update-time" id="newsTime">로딩중...</span>
+                        <button class="refresh-btn" onclick="refreshNewsManual()">↻</button>
+                    </div>
                 </div>
-            </div>
-            <div id="activeTagsHome" class="tag-container" style="margin-bottom:10px; overflow-x:auto; flex-wrap:nowrap;">
-                </div>
-            <ul class="news-list" id="newsList">
-                <li style="padding:10px; color:#888; font-size:0.9rem;">뉴스를 불러오는 중입니다...</li>
-            </ul>
-        </div>
-    </div>
-
-    <div id="tab-index" class="tab-content">
-        <div class="grid-2x2">
-            <div class="mini-chart" id="chart-spx"></div>
-            <div class="mini-chart" id="chart-nas"></div>
-            <div class="mini-chart" id="chart-nikkei"></div>
-            <div class="mini-chart" id="chart-us10y"></div> 
-        </div>
-        <div class="card" style="padding:0;">
-            <div class="calendar-box" id="calendar-container"></div>
-        </div>
-    </div>
-
-    <div id="tab-currency" class="tab-content">
-        <div class="currency-grid">
-            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDCNY", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
-            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDEUR", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
-            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDGBP", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
-            <div class="currency-item"><div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>{ "symbol": "FX_IDC:USDCHF", "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false }</script></div></div>
-        </div>
-    </div>
-
-    <div id="tab-utility" class="tab-content">
-        
-        <div class="card">
-            <div class="section-title">📢 뉴스 키워드 관리</div>
-            <div class="tag-input-area">
-                <input type="text" id="tagInput" class="tag-input" placeholder="키워드 입력 (예: 금리)">
-                <button class="tag-add-btn" onclick="addTag()">추가</button>
-            </div>
-            <div id="tagContainer" class="tag-container">
-                </div>
-        </div>
-
-        <div class="card" id="calcCard">
-            <div class="toggle-row">
-                <div class="radio-label long active" onclick="setPos('long')">LONG</div>
-                <div class="radio-label short" onclick="setPos('short')">SHORT</div>
-            </div>
-
-            <div class="section-title">
-                현재 보유
-                <button class="reset-btn" onclick="resetCalc()">초기화</button>
-            </div>
-            <div class="input-row">
-                <div class="input-group"><span class="input-label">평단가</span><input type="text" inputmode="decimal" class="calc-input" id="curPrice" placeholder="0" oninput="calcAvg()"></div>
-                <div class="input-group"><span class="input-label">수량</span><input type="text" inputmode="decimal" class="calc-input" id="curQty" placeholder="0" oninput="calcAvg()"></div>
-            </div>
-
-            <div class="section-title">추가 진입</div>
-            <div class="input-row">
-                <div class="input-group"><span class="input-label">진입가</span><input type="text" inputmode="decimal" class="calc-input" id="addPrice" placeholder="0" oninput="calcAvg()"></div>
-                <div class="input-group"><span class="input-label">수량</span><input type="text" inputmode="decimal" class="calc-input" id="addQty" placeholder="0" oninput="syncSlider(this.value)"></div>
-            </div>
-            
-            <div class="slider-container">
-                <input type="range" id="qtySlider" min="0" max="100" value="0" oninput="syncInput(this.value)">
-            </div>
-
-            <div class="result-box">
-                <div style="font-size:0.85rem; color:#888; margin-bottom:10px;">최종 예상 평단가</div>
-                <div class="final-price-row">
-                    <div class="final-price" id="finalAvg">0</div>
-                    <div class="final-qty" id="totalQty">0 계약</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-routine" class="tab-content">
-        <div class="card">
-            <div class="section-title">📝 TRADING MEMO</div>
-            
-            <div class="tag-input-area">
-                <input type="text" id="memoInput" class="tag-input" placeholder="새로운 메모 입력...">
-                <button class="tag-add-btn" onclick="addMemo()">+</button>
-            </div>
-
-            <ul id="memoList" class="memo-list">
+                <ul class="news-list" id="newsList">
+                    <li style="padding:10px; color:#888; font-size:0.9rem;">뉴스를 불러오는 중입니다...</li>
                 </ul>
+            </div>
+        </div>
+
+        <div id="tab-index" class="tab-content">
+            <div class="grid-2x2">
+                <div class="mini-chart" id="chart-spx"></div>
+                <div class="mini-chart" id="chart-nas"></div>
+                <div class="mini-chart" id="chart-nikkei"></div>
+                <div class="mini-chart" id="chart-us10y"></div> 
+            </div>
+            <div class="card" style="padding:0;">
+                <div class="calendar-box" id="calendar-container"></div>
+            </div>
+        </div>
+
+        <div id="tab-currency" class="tab-content">
+            <div class="currency-grid">
+                <div class="currency-item" id="chart-cny"></div>
+                <div class="currency-item" id="chart-eur"></div>
+                <div class="currency-item" id="chart-gbp"></div>
+                <div class="currency-item" id="chart-chf"></div>
+            </div>
+        </div>
+
+        <div id="tab-utility" class="tab-content">
+            <div class="card" id="calcCard">
+                <div class="toggle-row">
+                    <div class="radio-label long active" onclick="setPos('long')">LONG</div>
+                    <div class="radio-label short" onclick="setPos('short')">SHORT</div>
+                </div>
+
+                <div class="section-title">
+                    현재 보유
+                    <button class="reset-btn" onclick="resetCalc()">초기화</button>
+                </div>
+                <div class="input-row">
+                    <div class="input-group"><span class="input-label">평단가</span><input type="tel" inputmode="decimal" id="curPrice" placeholder="0" oninput="calcAvg()"></div>
+                    <div class="input-group"><span class="input-label">수량</span><input type="tel" inputmode="decimal" id="curQty" placeholder="0" oninput="calcAvg()"></div>
+                </div>
+
+                <div class="section-title">추가 진입</div>
+                <div class="input-row">
+                    <div class="input-group"><span class="input-label">진입가</span><input type="tel" inputmode="decimal" id="addPrice" placeholder="0" oninput="calcAvg()"></div>
+                    <div class="input-group"><span class="input-label">수량</span><input type="tel" inputmode="decimal" id="addQty" placeholder="0" oninput="syncSlider(this.value)"></div>
+                </div>
+                
+                <div class="slider-container">
+                    <input type="range" id="qtySlider" min="0" max="100" value="0" oninput="syncInput(this.value)">
+                </div>
+
+                <div class="result-box">
+                    <div style="font-size:0.85rem; color:#888; margin-bottom:10px;">최종 예상 평단가</div>
+                    <div class="final-price-row">
+                        <div class="final-price" id="finalAvg">0</div>
+                        <div class="final-qty" id="totalQty">0 계약</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-routine" class="tab-content">
+            <div class="card">
+                <div class="section-title">📝 TRADING MEMO</div>
+                <textarea id="memoArea" class="memo-area" placeholder="매매 원칙, 진입 계획 등을 자유롭게 메모하세요. (자동 저장됨)" oninput="saveMemo()"></textarea>
+            </div>
+        </div>
+
+        <div id="tab-setting" class="tab-content">
+            <div class="card">
+                <div class="section-title">📢 뉴스 필터 키워드</div>
+                <div class="tag-input-area">
+                    <input type="text" id="tagInput" class="tag-input" placeholder="키워드 입력 (예: 금리)">
+                    <button class="tag-add-btn" onclick="addTag()">추가</button>
+                </div>
+                <div id="tagContainer" class="tag-container"></div>
+            </div>
         </div>
     </div>
 
-    <footer>Designed for Traders. | v23.0</footer>
+    <footer>v24.0 | Designed for Traders</footer>
 
     <script>
-        // --- 1. 차트 렌더링 ---
-        const loadedTabs = { home: false, index: false, currency: false, utility: true, routine: true };
+        // === 1. 네비게이션 & UI 로직 ===
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('visible');
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('visible');
+            }
+        }
 
-        function renderWidget(containerId, symbol) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            container.innerHTML = "";
-            const script = document.createElement("script");
-            script.type = "text/javascript";
-            script.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
-            script.async = true;
-            script.innerHTML = JSON.stringify({
-                "symbol": symbol, "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false
-            });
-            const widgetContainer = document.createElement("div");
-            widgetContainer.className = "tradingview-widget-container";
-            widgetContainer.style.width = "100%"; widgetContainer.style.height = "100%";
-            widgetContainer.appendChild(document.createElement("div")).className = "tradingview-widget-container__widget";
-            widgetContainer.appendChild(script);
-            container.appendChild(widgetContainer);
+        const loadedTabs = { home: false, index: false, currency: false, utility: true, routine: true, setting: true };
+
+        function loadTabContent(tabName) {
+            if (loadedTabs[tabName]) return;
+            // 1M (1개월) 차트로 변경하여 데이터 공백 방지
+            const chartOpts = { "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1M", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false };
+            
+            const createWidget = (id, sym) => {
+                const con = document.getElementById(id);
+                if(!con) return;
+                con.innerHTML = "";
+                const s = document.createElement("script");
+                s.type = "text/javascript";
+                s.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
+                s.async = true;
+                s.innerHTML = JSON.stringify({ ...chartOpts, "symbol": sym });
+                const wrap = document.createElement("div");
+                wrap.className = "tradingview-widget-container";
+                wrap.style.width="100%"; wrap.style.height="100%";
+                wrap.appendChild(document.createElement("div")).className="tradingview-widget-container__widget";
+                wrap.appendChild(s);
+                con.appendChild(wrap);
+            };
+
+            if (tabName === 'home') {
+                createWidget('chart-dxy', 'TVC:DXY'); 
+                createWidget('chart-usdkrw', 'FX_IDC:USDKRW');
+                createWidget('chart-usdjpy', 'FX_IDC:USDJPY'); 
+                createWidget('chart-usdeur', 'FX_IDC:USDEUR');
+            } else if (tabName === 'index') {
+                createWidget('chart-spx', 'FOREXCOM:SPX500'); 
+                createWidget('chart-nas', 'FOREXCOM:NAS100');
+                createWidget('chart-nikkei', 'OANDA:JP225USD'); 
+                createWidget('chart-us10y', 'TVC:US10Y');
+                renderCalendar();
+            } else if (tabName === 'currency') {
+                createWidget('chart-cny', 'FX_IDC:USDCNY'); 
+                createWidget('chart-eur', 'FX_IDC:USDEUR');
+                createWidget('chart-gbp', 'FX_IDC:USDGBP'); 
+                createWidget('chart-chf', 'FX_IDC:USDCHF');
+            }
+            loadedTabs[tabName] = true;
         }
 
         function renderCalendar() {
@@ -324,30 +379,16 @@
             container.appendChild(script);
         }
 
-        function loadTabContent(tabName) {
-            if (loadedTabs[tabName]) return;
-            if (tabName === 'home') {
-                renderWidget('chart-dxy', 'CAPITALCOM:DXY'); renderWidget('chart-usdkrw', 'FX_IDC:USDKRW');
-                renderWidget('chart-usdjpy', 'FX_IDC:USDJPY'); renderWidget('chart-usdeur', 'FX_IDC:USDEUR');
-            } else if (tabName === 'index') {
-                renderWidget('chart-spx', 'FOREXCOM:SPX500'); renderWidget('chart-nas', 'FOREXCOM:NAS100');
-                renderWidget('chart-nikkei', 'OANDA:JP225USD'); renderWidget('chart-us10y', 'TVC:US10Y');
-                renderCalendar();
-            } else if (tabName === 'currency') {
-                renderWidget('chart-cny', 'FX_IDC:USDCNY'); renderWidget('chart-eur', 'FX_IDC:USDEUR');
-                renderWidget('chart-gbp', 'FX_IDC:USDGBP'); renderWidget('chart-chf', 'FX_IDC:USDCHF');
-            }
-            loadedTabs[tabName] = true;
-        }
-
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
             
-            const activeBtn = document.querySelector(`.tab-btn[onclick="switchTab('${tabName}')"]`);
-            if(activeBtn) activeBtn.classList.add('active');
+            // 사이드바 메뉴 활성화 표시
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const activeNav = document.querySelector(`.nav-item[onclick="switchTab('${tabName}')"]`);
+            if(activeNav) activeNav.classList.add('active');
 
+            toggleMenu(); // 메뉴 닫기
             loadTabContent(tabName);
         }
 
@@ -355,8 +396,8 @@
             window.open("https://finance.naver.com/sise/sise_trans_style.naver?sosok=01", "NaverSupply", "width=500,height=600,location=no,status=no,scrollbars=yes");
         }
 
-        // --- 2. 태그(키워드) 관리 시스템 ---
-        let keywords = ['환율', '달러', '엔화', '유로', '금리', '외환']; // 기본값
+        // === 2. 태그(키워드) 관리 ===
+        let keywords = ['환율', '달러', '엔화', '유로', '금리', '외환']; // 기본
 
         function renderTags() {
             const container = document.getElementById('tagContainer');
@@ -368,44 +409,28 @@
                 container.appendChild(tag);
             });
             localStorage.setItem('userTags', JSON.stringify(keywords));
-            
-            // 홈 화면에도 태그 표시 (옵션)
-            const homeTags = document.getElementById('activeTagsHome');
-            if(homeTags) {
-                homeTags.innerHTML = "";
-                keywords.forEach(key => {
-                    const tag = document.createElement('span');
-                    tag.className = 'tag';
-                    tag.style.backgroundColor = '#f0f0f0';
-                    tag.style.border = 'none';
-                    tag.style.color = '#666';
-                    tag.innerText = key;
-                    homeTags.appendChild(tag);
-                });
-            }
         }
 
         function addTag() {
             const input = document.getElementById('tagInput');
             const val = input.value.trim();
             if (val && !keywords.includes(val)) {
-                keywords.push(val);
-                renderTags();
-                fetchNews(true); // 태그 추가 시 뉴스 갱신
+                keywords.push(val); renderTags();
+                fetchNews(true); 
             }
             input.value = "";
         }
 
         function removeTag(index) {
-            keywords.splice(index, 1);
-            renderTags();
-            fetchNews(true);
+            keywords.splice(index, 1); renderTags(); fetchNews(true);
         }
 
-        // --- 3. 뉴스 피드 ---
+        // === 3. 뉴스 피드 (캐시 우회 + 정렬) ===
+        const NEWS_API_URL = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://news.google.com/rss/search?q=경제+금융+주식+환율&hl=ko&gl=KR&ceid=KR:ko");
+
         async function fetchNews(isManual = false) {
-            const CACHE_KEY = 'newsCache23';
-            const CACHE_TIME_KEY = 'newsCacheTime23';
+            const CACHE_KEY = 'newsCache24';
+            const CACHE_TIME_KEY = 'newsCacheTime24';
             const CACHE_DURATION = 300000; // 5분
 
             const now = new Date().getTime();
@@ -421,11 +446,11 @@
             }
 
             timeEl.innerText = "로딩중...";
-            const RSS_URL = "https://news.google.com/rss/search?q=경제+금융+주식+환율&hl=ko&gl=KR&ceid=KR:ko";
-            const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
+            // 캐시 방지용 난수 추가
+            const fetchUrl = `${NEWS_API_URL}&_t=${now}`;
 
             try {
-                const res = await fetch(API_URL);
+                const res = await fetch(fetchUrl);
                 const data = await res.json();
                 
                 if (data.items && data.items.length > 0) {
@@ -453,16 +478,16 @@
             const uniqueTitles = new Set();
             const todayDate = new Date().getDate();
 
-            // 필터링
-            const filteredItems = items.filter(item => 
-                keywords.some(key => item.title.includes(key))
-            );
-            
-            // 날짜순 정렬
-            filteredItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+            // 날짜 내림차순 정렬 (최신순)
+            items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
-            filteredItems.forEach(item => {
+            items.forEach(item => {
                 if (count >= 15) return;
+                
+                // 키워드 필터링
+                const hasKeyword = keywords.some(key => item.title.includes(key));
+                if (!hasKeyword) return;
+
                 if (uniqueTitles.has(item.title)) return;
                 uniqueTitles.add(item.title);
                 
@@ -479,65 +504,28 @@
                 listEl.appendChild(li);
                 count++;
             });
-
-            if(count === 0) {
-                listEl.innerHTML = "<li style='padding:10px; color:#888; text-align:center;'>해당 키워드의 뉴스가 없습니다.</li>";
-            }
+            
+            if(count === 0) listEl.innerHTML = "<li style='padding:15px; text-align:center; color:#999;'>설정된 키워드와 일치하는 뉴스가 없습니다.</li>";
         }
 
         function refreshNewsManual() { fetchNews(true); }
 
-        // --- 4. 메모장 로직 ---
-        let memos = [];
-
-        function renderMemos() {
-            const list = document.getElementById('memoList');
-            list.innerHTML = "";
-            memos.forEach((memo, index) => {
-                const li = document.createElement('li');
-                li.className = 'memo-item';
-                li.innerHTML = `
-                    <span>${memo}</span>
-                    <span class="memo-delete" onclick="deleteMemo(${index})">×</span>
-                `;
-                list.appendChild(li);
-            });
-            localStorage.setItem('userMemos', JSON.stringify(memos));
-        }
-
-        function addMemo() {
-            const input = document.getElementById('memoInput');
-            const val = input.value.trim();
-            if(val) {
-                memos.push(val);
-                renderMemos();
-                input.value = "";
-            }
-        }
-
-        function deleteMemo(index) {
-            memos.splice(index, 1);
-            renderMemos();
-        }
-
-        // --- 5. 계산기 로직 ---
+        // === 4. 계산기 로직 ===
         let currentPos = 'long';
         function setPos(pos) {
             currentPos = pos;
             const card = document.getElementById('calcCard');
             const longBtn = document.querySelector('.radio-label.long');
             const shortBtn = document.querySelector('.radio-label.short');
-            if (pos === 'long') { longBtn.classList.add('active'); shortBtn.classList.remove('active'); card.style.backgroundColor = "var(--bg-long)"; } 
-            else { longBtn.classList.remove('active'); shortBtn.classList.add('active'); card.style.backgroundColor = "var(--bg-short)"; }
+            if (pos === 'long') { longBtn.classList.add('active'); shortBtn.classList.remove('active'); } 
+            else { longBtn.classList.remove('active'); shortBtn.classList.add('active'); }
             saveData(); calcAvg();
         }
-        
         function parseInput(id) { 
             const raw = document.getElementById(id).value;
             const clean = raw.replace(/[^0-9.]/g, ''); 
             return parseFloat(clean) || 0; 
         }
-        
         function syncSlider(val) { document.getElementById('qtySlider').value = val; calcAvg(); }
         function syncInput(val) { document.getElementById('addQty').value = val; calcAvg(); }
         
@@ -558,20 +546,14 @@
         function saveData() {
             try { localStorage.setItem('tradingData', JSON.stringify({ curPrice: document.getElementById('curPrice').value, curQty: document.getElementById('curQty').value, addPrice: document.getElementById('addPrice').value, addQty: document.getElementById('addQty').value, pos: currentPos })); } catch(e){}
         }
-
+        function saveMemo() { localStorage.setItem('userMemo', document.getElementById('memoArea').value); }
+        
         function loadData() {
             try {
-                // 키워드 로드
                 const savedTags = localStorage.getItem('userTags');
                 if(savedTags) keywords = JSON.parse(savedTags);
                 renderTags();
 
-                // 메모 로드
-                const savedMemos = localStorage.getItem('userMemos');
-                if(savedMemos) memos = JSON.parse(savedMemos);
-                renderMemos();
-
-                // 계산기 로드
                 const saved = localStorage.getItem('tradingData');
                 if (saved) {
                     const d = JSON.parse(saved);
@@ -580,6 +562,8 @@
                     document.getElementById('qtySlider').value = d.addQty||0;
                     setPos(d.pos || 'long');
                 } else setPos('long');
+                
+                const m = localStorage.getItem('userMemo'); if(m) document.getElementById('memoArea').value = m;
             } catch(e) {}
         }
 
