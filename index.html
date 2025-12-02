@@ -30,16 +30,17 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 탭 스타일 */
+        /* 탭 스타일 (잘림 방지 및 최적화) */
         .tab-container {
-            display: flex; gap: 6px; margin-bottom: 12px;
-            background: #e8ecef; padding: 4px; border-radius: 10px;
-            overflow-x: auto; 
+            display: flex; gap: 4px; margin-bottom: 12px;
+            background: #e8ecef; padding: 3px; border-radius: 10px;
+            overflow-x: auto; white-space: nowrap;
         }
         .tab-btn {
-            flex: 1; padding: 10px 4px; border: none; background: transparent;
+            flex: 1; padding: 10px 0; border: none; background: transparent;
             color: var(--text-sub); border-radius: 8px; font-weight: 700; font-size: 0.8rem;
-            cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
+            cursor: pointer; transition: all 0.2s ease; text-align: center;
+            min-width: 60px; /* 최소 너비 확보 */
         }
         .tab-btn.active {
             background: var(--card-bg); color: var(--primary-blue);
@@ -86,14 +87,15 @@
         .input-group { flex: 1; }
         .input-label { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 4px; display: block; }
         
-        input[type="number"], input[type="tel"] {
+        /* [중요] 아이폰 소수점 키보드 대응: inputmode="decimal" */
+        input[type="text"].calc-input {
             width: 100%; border: none; border-bottom: 2px solid var(--track-bg);
             background: transparent; padding: 6px 0;
             font-size: 1.1rem; font-weight: 700; color: var(--text-main);
             text-align: right; outline: none; transition: border-color 0.2s;
             box-sizing: border-box;
         }
-        input:focus { border-color: var(--primary-blue); }
+        input.calc-input:focus { border-color: var(--primary-blue); }
 
         .slider-container { margin: 15px 0 10px 0; }
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
@@ -112,11 +114,6 @@
             background: rgba(255,255,255,0.6); border-radius: 12px; padding: 15px; margin-top: 20px;
             border: 1px solid rgba(0,0,0,0.05);
         }
-        .gap-display {
-            font-size: 0.85rem; font-weight: 600; color: var(--text-sub);
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-        }
-        .gap-val { font-size: 1.1rem; font-weight: 800; }
         .final-price-row { display: flex; justify-content: space-between; align-items: flex-end; }
         .final-price { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--text-main); }
         .final-qty { font-size: 0.9rem; font-weight: 700; color: var(--text-sub); }
@@ -135,12 +132,19 @@
         .news-filter-row { width: 100%; }
         
         .filter-input {
-            width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ddd;
+            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;
             background: #f9f9f9; font-size: 0.85rem; color: #333; box-sizing: border-box;
         }
         .filter-input:focus { border-color: var(--primary-blue); outline: none; }
 
+        .news-update-info { display: flex; align-items: center; gap: 6px; }
         .news-update-time { font-size: 0.75rem; color: var(--text-sub); }
+        .refresh-btn {
+            background: none; border: 1px solid #ddd; border-radius: 4px; padding: 2px 6px;
+            cursor: pointer; font-size: 0.7rem; color: var(--text-main);
+        }
+        .refresh-btn:active { background: #eee; }
+
         .news-list { list-style: none; padding: 0; margin: 0; }
         .news-item { padding: 12px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; gap: 10px; }
         .news-link {
@@ -156,11 +160,7 @@
         
         .calendar-box { height: 400px; overflow: hidden; border-radius: 8px; }
         
-        /* 푸터 스타일 */
-        footer { 
-            margin-top: 40px; text-align: center; color: var(--text-sub); 
-            font-size: 0.7rem; border-top: 1px solid #eee; padding-top: 15px;
-        }
+        footer { margin-top: 40px; text-align: center; color: var(--text-sub); font-size: 0.7rem; border-top: 1px solid #eee; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -187,10 +187,13 @@
             <div class="news-header">
                 <div class="news-title-row">
                     <div class="section-title" style="margin:0;">🔥 실시간 환율 속보</div>
-                    <span class="news-update-time" id="newsTime">로딩중...</span>
+                    <div class="news-update-info">
+                        <span class="news-update-time" id="newsTime">로딩중...</span>
+                        <button class="refresh-btn" onclick="refreshNewsManual()">↻</button>
+                    </div>
                 </div>
                 <div class="news-filter-row">
-                    <input type="text" id="userKeywords" class="filter-input" placeholder="키워드 추가 (예: 비트코인, 금리) - 쉼표로 구분" onchange="updateKeywords()">
+                    <input type="text" id="userKeywords" class="filter-input" placeholder="키워드 추가 (예: 비트코인) - 기본: 환율,달러..." onchange="updateKeywords()">
                 </div>
             </div>
             <ul class="news-list" id="newsList">
@@ -232,14 +235,14 @@
                 <button class="reset-btn" onclick="resetCalc()">초기화</button>
             </div>
             <div class="input-row">
-                <div class="input-group"><span class="input-label">평단가</span><input type="tel" id="curPrice" placeholder="0" oninput="calcAvg()"></div>
-                <div class="input-group"><span class="input-label">수량</span><input type="tel" id="curQty" placeholder="0" oninput="calcAvg()"></div>
+                <div class="input-group"><span class="input-label">평단가</span><input type="text" inputmode="decimal" class="calc-input" id="curPrice" placeholder="0" oninput="calcAvg()"></div>
+                <div class="input-group"><span class="input-label">수량</span><input type="text" inputmode="decimal" class="calc-input" id="curQty" placeholder="0" oninput="calcAvg()"></div>
             </div>
 
             <div class="section-title">추가 진입</div>
             <div class="input-row">
-                <div class="input-group"><span class="input-label">진입가</span><input type="tel" id="addPrice" placeholder="0" oninput="calcAvg()"></div>
-                <div class="input-group"><span class="input-label">수량</span><input type="tel" id="addQty" placeholder="0" oninput="syncSlider(this.value)"></div>
+                <div class="input-group"><span class="input-label">진입가</span><input type="text" inputmode="decimal" class="calc-input" id="addPrice" placeholder="0" oninput="calcAvg()"></div>
+                <div class="input-group"><span class="input-label">수량</span><input type="text" inputmode="decimal" class="calc-input" id="addQty" placeholder="0" oninput="syncSlider(this.value)"></div>
             </div>
             
             <div class="slider-container">
@@ -269,10 +272,10 @@
         </div>
     </div>
 
-    <footer>Designed for Traders. | v20.1</footer>
+    <footer>Designed for Traders. | v21.0</footer>
 
     <script>
-        // --- 1. 차트 렌더링 함수 ---
+        // --- 1. 차트 렌더링 함수 (3D 적용으로 꽉 찬 화면) ---
         const loadedTabs = { home: false, index: false, currency: false, utility: true, routine: true };
 
         function renderWidget(containerId, symbol) {
@@ -283,8 +286,9 @@
             script.type = "text/javascript";
             script.src = "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
             script.async = true;
+            // dateRange: "3D" 적용으로 차트 반토막 방지
             script.innerHTML = JSON.stringify({
-                "symbol": symbol, "width": "100%", "height": "100%", "locale": "kr", "dateRange": "1D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false
+                "symbol": symbol, "width": "100%", "height": "100%", "locale": "kr", "dateRange": "3D", "colorTheme": "light", "isTransparent": false, "autosize": true, "chartOnly": false
             });
             const widgetContainer = document.createElement("div");
             widgetContainer.className = "tradingview-widget-container";
@@ -338,10 +342,12 @@
             window.open("https://finance.naver.com/sise/sise_trans_style.naver?sosok=01", "NaverSupply", "width=500,height=600,location=no,status=no,scrollbars=yes");
         }
 
-        // --- 2. 뉴스 피드 (정렬 및 시간 포맷 수정) ---
-        async function fetchNews() {
-            const CACHE_KEY = 'newsCache20';
-            const CACHE_TIME_KEY = 'newsCacheTime20';
+        // --- 2. 뉴스 피드 (수동 갱신 + 24시간제 + 날짜구분) ---
+        const NEWS_API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent("https://news.google.com/rss/search?q=경제+금융+주식+환율&hl=ko&gl=KR&ceid=KR:ko")}`;
+
+        async function fetchNews(isManual = false) {
+            const CACHE_KEY = 'newsCache21';
+            const CACHE_TIME_KEY = 'newsCacheTime21';
             const CACHE_DURATION = 300000; // 5분
 
             const now = new Date().getTime();
@@ -349,80 +355,97 @@
             const cachedData = localStorage.getItem(CACHE_KEY);
             const timeEl = document.getElementById('newsTime');
 
+            // 수동 갱신이 아니고 캐시가 유효하면 캐시 사용
+            if (!isManual && cachedData && lastFetch && (now - lastFetch < CACHE_DURATION)) {
+                renderNews(JSON.parse(cachedData));
+                const dateObj = new Date(parseInt(lastFetch));
+                timeEl.innerText = `업데이트: ${formatTime(dateObj)} (캐시)`;
+                return;
+            }
+
+            timeEl.innerText = "로딩중...";
+
+            // 사용자 키워드 로드
             const userKeywordStr = localStorage.getItem('userKeywords') || "";
             const userKeywords = userKeywordStr.split(',').map(k => k.trim()).filter(k => k.length > 0);
             const defaultKeywords = ['환율', '달러', '엔화', '유로', '금리', '외환', 'USD', 'KRW', 'JPY'];
             const allKeywords = [...defaultKeywords, ...userKeywords];
 
-            const render = (items) => {
-                // 시간순 정렬 (최신순)
-                items.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-
-                const listEl = document.getElementById('newsList');
-                listEl.innerHTML = "";
-                let count = 0;
-                const uniqueTitles = new Set();
-
-                items.forEach(item => {
-                    if (count >= 15) return;
-                    if (uniqueTitles.has(item.title)) return;
-                    const hasKeyword = allKeywords.some(key => item.title.includes(key));
-                    if (!hasKeyword) return;
-
-                    uniqueTitles.add(item.title);
-                    const li = document.createElement('li');
-                    li.className = 'news-item';
-                    
-                    const date = new Date(item.pubDate);
-                    // 24시간제 강제 변환
-                    const timeStr = date.toLocaleTimeString('ko-KR', {
-                        hour12: false, 
-                        hour: "2-digit", 
-                        minute: "2-digit"
-                    });
-
-                    li.innerHTML = `
-                        <div style="min-width:45px; font-size:0.75rem; font-weight:bold; color:var(--primary-blue);">${timeStr}</div>
-                        <div><a href="${item.link}" target="_blank" class="news-link">${item.title}</a></div>
-                    `;
-                    listEl.appendChild(li);
-                    count++;
-                });
-            };
-
-            if (cachedData && lastFetch && (now - lastFetch < CACHE_DURATION)) {
-                render(JSON.parse(cachedData));
-                timeEl.innerText = `업데이트: ${new Date(parseInt(lastFetch)).toLocaleTimeString('ko-KR', {hour12: false, hour:'2-digit', minute:'2-digit'})} (캐시)`;
-                return;
-            }
-
-            const RSS_URL = "https://news.google.com/rss/search?q=경제+금융+주식+환율&hl=ko&gl=KR&ceid=KR:ko";
-            const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
-
             try {
-                const res = await fetch(API_URL);
+                const res = await fetch(NEWS_API_URL);
                 const data = await res.json();
+                
                 if (data.items && data.items.length > 0) {
-                    render(data.items);
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(data.items));
+                    // 키워드 필터링 및 정렬
+                    const filtered = data.items.filter(item => 
+                        allKeywords.some(key => item.title.includes(key))
+                    );
+                    
+                    // 날짜 내림차순 정렬 (최신순)
+                    filtered.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+                    renderNews(filtered);
+                    
+                    // 캐시 저장
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(filtered));
                     localStorage.setItem(CACHE_TIME_KEY, now);
-                    timeEl.innerText = `업데이트: ${new Date().toLocaleTimeString('ko-KR', {hour12: false, hour:'2-digit', minute:'2-digit'})}`;
+                    timeEl.innerText = `업데이트: ${formatTime(new Date())}`;
                 }
             } catch (e) {
                 if (cachedData) {
-                    render(JSON.parse(cachedData));
-                    timeEl.innerText = "업데이트 실패 (이전 데이터)";
+                    renderNews(JSON.parse(cachedData));
+                    timeEl.innerText = "갱신 실패 (이전 데이터)";
                 } else timeEl.innerText = "연결 확인 필요";
             }
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString('ko-KR', {hour12: false, hour: '2-digit', minute:'2-digit'});
+        }
+
+        function renderNews(items) {
+            const listEl = document.getElementById('newsList');
+            listEl.innerHTML = "";
+            let count = 0;
+            const uniqueTitles = new Set();
+            const todayDate = new Date().getDate();
+
+            items.forEach(item => {
+                if (count >= 15) return;
+                if (uniqueTitles.has(item.title)) return;
+                uniqueTitles.add(item.title);
+                
+                const li = document.createElement('li');
+                li.className = 'news-item';
+                const itemDate = new Date(item.pubDate);
+                
+                // 24시간제 시간
+                let timeStr = formatTime(itemDate);
+                // 날짜가 오늘이 아니면 (어제) 표시
+                if (itemDate.getDate() !== todayDate) {
+                    timeStr += " (어제)";
+                }
+
+                li.innerHTML = `
+                    <div style="min-width:65px; font-size:0.75rem; font-weight:bold; color:var(--primary-blue); text-align:right;">${timeStr}</div>
+                    <div><a href="${item.link}" target="_blank" class="news-link">${item.title}</a></div>
+                `;
+                listEl.appendChild(li);
+                count++;
+            });
+        }
+
+        function refreshNewsManual() {
+            fetchNews(true);
         }
 
         function updateKeywords() {
             const input = document.getElementById('userKeywords');
             localStorage.setItem('userKeywords', input.value);
-            fetchNews();
+            fetchNews(true); // 키워드 변경 시 즉시 갱신
         }
 
-        // --- 3. 계산기 로직 ---
+        // --- 3. 계산기 로직 (아이폰 키보드 대응) ---
         let currentPos = 'long';
         function setPos(pos) {
             currentPos = pos;
@@ -433,19 +456,29 @@
             else { longBtn.classList.remove('active'); shortBtn.classList.add('active'); card.style.backgroundColor = "var(--bg-short)"; }
             saveData(); calcAvg();
         }
-        function parseInput(id) { return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0; }
+        
+        // input[type=text]지만 inputmode="decimal"로 숫자패드 유도
+        function parseInput(id) { 
+            const raw = document.getElementById(id).value;
+            // 숫자와 소수점만 남기고 제거
+            const clean = raw.replace(/[^0-9.]/g, ''); 
+            return parseFloat(clean) || 0; 
+        }
+        
         function syncSlider(val) { document.getElementById('qtySlider').value = val; calcAvg(); }
         function syncInput(val) { document.getElementById('addQty').value = val; calcAvg(); }
         
         function calcAvg() {
             const curP = parseInput('curPrice'); const curQ = parseInput('curQty');
             const addP = parseInput('addPrice'); const addQ = parseInput('addQty');
+            
             const totalQ = curQ + addQ;
             let finalAvg = totalQ > 0 ? ((curP * curQ) + (addP * addQ)) / totalQ : 0;
             document.getElementById('finalAvg').innerText = finalAvg > 0 ? finalAvg.toFixed(2) : "0";
             document.getElementById('totalQty').innerText = totalQ + " 계약";
             saveData();
         }
+        
         function resetCalc() {
             ['curPrice','curQty','addPrice','addQty'].forEach(id=>document.getElementById(id).value="");
             document.getElementById('qtySlider').value = 0; setPos('long'); calcAvg();
@@ -454,9 +487,11 @@
             try { localStorage.setItem('tradingData', JSON.stringify({ curPrice: document.getElementById('curPrice').value, curQty: document.getElementById('curQty').value, addPrice: document.getElementById('addPrice').value, addQty: document.getElementById('addQty').value, pos: currentPos })); } catch(e){}
         }
         function saveRoutine() {
-            localStorage.setItem('routineData', JSON.stringify({ r1: document.getElementById('routine1').value, r2: document.getElementById('routine2').value, r3: document.getElementById('routine3').value }));
+            const rData = { r1: document.getElementById('routine1').value, r2: document.getElementById('routine2').value, r3: document.getElementById('routine3').value };
+            localStorage.setItem('routineData', JSON.stringify(rData));
         }
         function saveMemo() { localStorage.setItem('userMemo', document.getElementById('memoArea').value); }
+        
         function loadData() {
             try {
                 document.getElementById('userKeywords').value = localStorage.getItem('userKeywords') || "";
@@ -476,7 +511,7 @@
 
         document.addEventListener('DOMContentLoaded', () => { 
             loadData(); loadTabContent('home'); fetchNews();
-            setInterval(fetchNews, 300000);
+            setInterval(() => fetchNews(false), 300000);
         });
     </script>
 </body>
